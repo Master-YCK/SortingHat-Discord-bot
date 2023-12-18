@@ -8,8 +8,6 @@ from discord.ext import commands
 
 # Discord bot token
 TOKEN = "MTE4NTg1MTUwOTEyNTE2OTIxMg.GVV6un.aaWm2D92FXaEyc1SkY9CATdlUcZhFV62a0_MEE"
-# ChatGPT API KEY
-openai.api_key = "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"
 # Setting the bot permession
 intents = discord.Intents.default()
 intents.message_content = True
@@ -42,17 +40,18 @@ def run():
 
         await channel.send(embed = embed)
 
-    @client.event
-    async def on_message(message):
-        if message.author == client.user:
-            return
+    @client.command()
+    async def HELP(ctx):
+        help_embed = discord.Embed(
+            title = f'**THIS IS HELP GUIDE TO QUICK START ON BOT**',
+            description = "**Command List**\n ./HELP **:** Help Message\n ./myrole **:** Check you own user role\n ./talk XXXX **:** Talk with the bot"
+        )
+        await ctx.send(embed = help_embed)
 
-        if message.content.startswith('./chat'):
-            user_input = message.content[7:]  # 截取用户输入，去掉 !chat
-            response = chatgpt_response.get_chat_response(user_input)
-            await message.channel.send(response)
-
-        await client.process_commands(message)
+    @client.command()  # 使用 commands.command() 装饰器定义命令
+    async def chat(ctx, *, user_input):
+        response = chatgpt_response.get_chat_response(user_input)
+        await ctx.send(response)
 
     # async def on_member_join(member):
     #     # 发送欢迎消息

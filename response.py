@@ -11,5 +11,5 @@ def handle_response(message) -> str:
     
     if p_message == "how are you":
         return "I'm great! How about you?"
-
+    
     return "Sor, what 7 you said ar ???"
