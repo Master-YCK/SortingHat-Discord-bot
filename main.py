@@ -1,5 +1,6 @@
 import discord
 import response
+import datetime
 from discord.ext import commands
 
 # Discord bot token
@@ -9,6 +10,9 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
+welcome_channel = 1185848222321754144 
+#1071065748631466024
+
 client = commands.Bot(command_prefix="./", intents=intents)
 
 # Bot start message
@@ -17,7 +21,22 @@ def run():
     async def on_ready():
         print(f"{client.user} is now running!")
 
-    # @client.event
+    #Welcome message and auto assign a user role
+    @client.event
+    async def on_member_join(member):
+        channel = client.get_channel(welcome_channel)
+        role = discord.utils.get(member.guild.roles, name = "麻瓜")
+        await member.add_roles(role)
+
+        embed = discord.Embed(
+            title = f'**Welcome to Hogwarts !**',
+            description = f'**{member.mention}** come to the Hogwarts, but he/she is a **{role.name}** !!!',
+            color = 0xff55ff,
+            timestamp = datetime.datetime.now()
+        )
+
+        await channel.send(embed = embed)
+
     # async def on_member_join(member):
     #     # 发送欢迎消息
     #     await member.send("欢迎加入！请回答以下五个问题，以帮助我们了解你。")
