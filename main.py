@@ -1,9 +1,8 @@
 import discord
 import response
 import chatgpt_response
-
 import datetime
-import openai
+import os
 from discord.ext import commands
 
 # Discord bot token
@@ -100,10 +99,10 @@ def run():
     async def talk(ctx, *, message):
         response_text = response.handle_response(message)
 
-        if response_text == "Sorry, what 7 you said ar ????":
+        if response_text == "Sor, what 7 you said ar ???":
             image_url = "images\what 7 you said.jpg"
             image_file = discord.File(image_url)
-            await ctx.send(f"{ctx.author.mention}, {response_text}", file=image_file)
+            await ctx.send(f"{ctx.author.mention}, {response_text}", file = image_file)
         else:
             await ctx.send(f"{ctx.author.mention}, {response_text}")
 
