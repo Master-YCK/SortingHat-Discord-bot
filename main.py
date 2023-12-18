@@ -1,10 +1,15 @@
 import discord
 import response
+import chatgpt_response
+
 import datetime
+import openai
 from discord.ext import commands
 
 # Discord bot token
 TOKEN = "MTE4NTg1MTUwOTEyNTE2OTIxMg.GVV6un.aaWm2D92FXaEyc1SkY9CATdlUcZhFV62a0_MEE"
+# ChatGPT API KEY
+openai.api_key = "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"
 # Setting the bot permession
 intents = discord.Intents.default()
 intents.message_content = True
@@ -12,7 +17,6 @@ intents.members = True
 
 #Set you welcome channel
 welcome_channel = 1071065748631466024
-
 
 client = commands.Bot(command_prefix="./", intents=intents)
 
@@ -37,6 +41,18 @@ def run():
         )
 
         await channel.send(embed = embed)
+
+    @client.event
+    async def on_message(message):
+        if message.author == client.user:
+            return
+
+        if message.content.startswith('./chat'):
+            user_input = message.content[7:]  # 截取用户输入，去掉 !chat
+            response = chatgpt_response.get_chat_response(user_input)
+            await message.channel.send(response)
+
+        await client.process_commands(message)
 
     # async def on_member_join(member):
     #     # 发送欢迎消息
