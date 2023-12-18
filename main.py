@@ -10,8 +10,9 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
-welcome_channel = 1185848222321754144 
-#1071065748631466024
+#Set you welcome channel
+welcome_channel = 1071065748631466024
+
 
 client = commands.Bot(command_prefix="./", intents=intents)
 
@@ -26,7 +27,7 @@ def run():
     async def on_member_join(member):
         channel = client.get_channel(welcome_channel)
         role = discord.utils.get(member.guild.roles, name = "麻瓜")
-        await member.add_roles(role)
+        await member.add_roles(role) 
 
         embed = discord.Embed(
             title = f'**Welcome to Hogwarts !**',
