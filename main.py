@@ -1,22 +1,56 @@
 import setting
+
 import discord
 from discord.ext import commands
 
-def run():
-    #Discord intent setup for bot running
-    intents = discord.Intents.default()
-    hat = commands.Bot(command_prefix="./", intents = intents)
+import datetime
 
+
+def run():
+    # Discord intent setup for bot running
+    intents = discord.Intents.default()
+    intents.message_content = True
+    intents.members = True
+
+    hat = commands.Bot(command_prefix="./", intents=intents)
+
+    # Bot running message
     @hat.event
     async def on_ready():
         print("--------------------")
         print(hat.user)
         print(hat.user.id)
-        print("Magic Start")
+        print("** Magic Start **")
         print("--------------------")
 
+    # Welcome message and auto assign a user role
+    @hat.event
+    async def on_member_join(member):
+        channel = hat.get_channel(setting.WELCOME_CHANNEL)
+        role = discord.utils.get(member.guild.roles, name="麻瓜")
+        await member.add_roles(role)
+
+        embed = discord.Embed(
+            title=f"**Welcome to Hogwarts !**",
+            description=f"**{member.mention}** come to the Hogwarts, but he/she is a **{role.name}** !!!",
+            color=0xFF55FF,
+            timestamp=datetime.datetime.now(),
+        )
+
+        await channel.send(embed=embed)
+
+    # Server user rock check (Self check)
+    @hat.command()
+    async def myrole(ctx):
+        user = ctx.author
+        roles = [role.name for role in user.roles if not role.is_default()]
+        if not roles:
+            await ctx.send(f"{ctx.author.mention} doesn't have any roles.")
+        else:
+            await ctx.send(f"{ctx.author.mention} has the following roles: {', '.join(roles)}")
+
+    # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)
 
 if __name__ == "__main__":
     run()
-
