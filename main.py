@@ -5,7 +5,6 @@ from discord.ext import commands
 
 import datetime
 
-
 def run():
     # Discord intent setup for bot running
     intents = discord.Intents.default()
