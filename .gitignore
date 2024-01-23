@@ -2,8 +2,8 @@
 
 #Folders
 .venv/
-/ pycache /*
-/ Old-Code /*
+__pycache__/
+Old-Code/
 
 #Files
 .env
