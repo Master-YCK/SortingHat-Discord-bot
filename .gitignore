@@ -1,2 +1,8 @@
+#File or folder you want to ignore here
+
+#Folders
 .venv/
+.Old-Code/
+
+#Files
 .env

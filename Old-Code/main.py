@@ -5,9 +5,10 @@
 # import os
 # from discord.ext import commands
 
-# # Discord bot token
+# Discord bot token
 # TOKEN = "MTE4NTg1MTUwOTEyNTE2OTIxMg.GVV6un.aaWm2D92FXaEyc1SkY9CATdlUcZhFV62a0_MEE"
-# # Setting the bot permession
+
+# Setting the bot permession
 # intents = discord.Intents.default()
 # intents.message_content = True
 # intents.members = True
