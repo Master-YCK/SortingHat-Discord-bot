@@ -1,4 +1,5 @@
 import setting
+import response
 
 import discord
 from discord.ext import commands
@@ -47,6 +48,18 @@ def run():
             await ctx.send(f"{ctx.author.mention} doesn't have any roles.")
         else:
             await ctx.send(f"{ctx.author.mention} has the following roles: {', '.join(roles)}")
+
+    # User message response
+    @hat.command()
+    async def talk(ctx, *, user_input):
+        bot_response = response.handle_response(user_input)
+
+        if bot_response == None:
+            image_path = "images/what 7 you said.jpg"
+            image_file = discord.File(image_path)
+            await ctx.send(f"{ctx.author.mention}, Sor, What 7 You Said Ar???",file = image_file)
+        else:
+            await ctx.send(f"{ctx.author.mention}, {bot_response}")
 
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)
