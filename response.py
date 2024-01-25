@@ -3,7 +3,6 @@ import re
 #Bot message response function
 def handle_response(message) -> str:
     userInput = re.sub('[^A-Za-z ]+', '', message.lower()).replace(" ", "")
-    print(userInput)
 
     if userInput == "hello":
         return "Hello !"
