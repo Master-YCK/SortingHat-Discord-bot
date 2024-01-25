@@ -9,6 +9,12 @@ def handle_response(message) -> str:
         return "Hi !"
     
     if userInput == "how are you":
-        return "I'm great! How about you?"
+        return "I'm great! How about you ?"
+    
+    if userInput == "i'm fine":
+        return "Good to hear that !"
+    
+    if userInput == "who are you":  
+        return "I'm Sorting Hat !!"
     
     return None
