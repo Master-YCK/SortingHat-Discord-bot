@@ -61,6 +61,8 @@ def run():
         else:
             await ctx.send(f"{ctx.author.mention}, {bot_response}")
 
+    
+
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)
 

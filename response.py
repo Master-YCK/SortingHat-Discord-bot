@@ -1,6 +1,9 @@
+import re
+
 #Bot message response function
 def handle_response(message) -> str:
-    userInput = message.lower()
+    userInput = re.sub('[^A-Za-z ]+', '', message.lower()).replace(" ", "")
+    print(userInput)
 
     if userInput == "hello":
         return "Hello !"
@@ -8,13 +11,13 @@ def handle_response(message) -> str:
     if userInput == "hi":
         return "Hi !"
     
-    if userInput == "how are you":
+    if userInput == "howareyou":
         return "I'm great! How about you ?"
     
-    if userInput == "i'm fine":
+    if userInput == "imfine":
         return "Good to hear that !"
     
-    if userInput == "who are you":  
+    if userInput == "whoareyou":  
         return "I'm Sorting Hat !!"
     
     return None
