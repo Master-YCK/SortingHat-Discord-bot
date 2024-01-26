@@ -5,6 +5,8 @@ import discord
 from discord.ext import commands
 
 import datetime
+import random
+import os
 
 def run():
     # Discord intent setup for bot running
@@ -68,6 +70,16 @@ def run():
             await ctx.send(f"{ctx.author.mention}, {bot_response}")
             print(f"Bot response to ({ctx.author}) with [{bot_response}]")
 
+    # User roll a dice
+    @hat.command()
+    async def roll(ctx):
+        image_dir = "images/dice/"
+        dice_image = os.listdir(image_dir)
+        image_path = image_dir + random.choice(dice_image)
+        image_file = discord.File(image_path)
+        await ctx.send(f"Congratulation !!! {ctx.author.mention} you roll the number:", file = image_file)
+        print(f"({ctx.author}) roll the dice with [{image_path}]")
+        
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)
 
