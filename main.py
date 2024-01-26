@@ -74,7 +74,7 @@ def run():
             await ctx.send(f"{ctx.author.mention}, {bot_response}")
             print(f"Bot response to ({ctx.author}) with [{bot_response}]")
 
-    # User roll a dice
+    # Roll the dice game
     @hat.command()
     async def roll(ctx):
         image_dir = "images/dice/"
