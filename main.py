@@ -1,13 +1,17 @@
+# Project file import
 import setting
 import response
 
+# Discord.py import
 import discord
 from discord.ext import commands
 
+# Python import
 import datetime
 import random
 import os
 
+# Main function
 def run():
     # Discord intent setup for bot running
     intents = discord.Intents.default()
@@ -40,7 +44,7 @@ def run():
         )
 
         await channel.send(embed=embed)
-        print(f"({member}) join the server at ({datetime.datetime.now()}), assigned [{role.name}]")
+        print(f"({member}) join the server at ({datetime.datetime.now()}), assigned roll: [{role.name}]")
 
 
     # Server user rock check (Self check)
