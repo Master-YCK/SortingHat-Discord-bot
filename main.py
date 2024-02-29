@@ -1,6 +1,7 @@
 # Project file import
 import setting
 import response
+import gamme
 
 # Discord.py import
 import discord
@@ -83,6 +84,13 @@ def run():
         image_file = discord.File(image_path)
         await ctx.send(f"Congratulation !!! {ctx.author.mention} you roll the number:", file = image_file)
         print(f"({ctx.author}) roll the dice with [{image_path}]")
+
+    # Chat with the bot using the Google Gamme 2b Model
+    @hat.command()
+    async def chat(ctx, *, user_input):
+        bot_response = gamme.generate(user_input)
+        await ctx.send(f"{ctx.author.mention}, {bot_response}")
+        print(f"Bot response to ({ctx.author}) with [{bot_response}]")
         
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)
