@@ -1,13 +1,13 @@
-# Project Title
+# SoritngHat Discord Bot
 
-A brief description of your project.
+In the hallowed halls of the world of digital magic, the SortingHat Discord bot spreads its wings and proves the transformative power of the Internet. Born from the art of Python and the magic of discord.py, this bot casts spells and incantations to light the way for virtual conversations within the shimmering confines of the Discord server.
+
 
 ## Table of Contents
 
-- [Installation](#installation)
+- [Magic Spell](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Installation
 
