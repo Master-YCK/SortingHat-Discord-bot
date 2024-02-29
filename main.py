@@ -88,7 +88,7 @@ def run():
     # Chat with the bot using the Google Gamme 2b Model
     @hat.command()
     async def chat(ctx, *, user_input):
-        bot_response = gamme.generate(user_input)
+        bot_response = gamme.genText(user_input)
         await ctx.send(f"{ctx.author.mention}, {bot_response}")
         print(f"Bot response to ({ctx.author}) with [{bot_response}]")
         
