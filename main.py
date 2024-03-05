@@ -12,6 +12,31 @@ import datetime
 import random
 import os
 
+class SimpleView(discord.ui.View):
+
+    foo : bool = None
+
+    async def disable_buttons(self):
+        for item in self.children:
+            item.disabled = True
+        await self.message.edit(view=self)
+
+    async def on_timeout(self) -> None:
+        return
+
+    # @discord.ui.button(label="Hello", style=discord.ButtonStyle.success)
+    # async def hello(self, interaction: discord.Interaction, button: discord.ui.Button):
+    #     await interaction.response.send_message("World!")
+    #     self.foo = True
+    #     self.stop()
+
+    @discord.ui.button(label="Retry", style=discord.ButtonStyle.red)
+    async def retry(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("The Retry Generate: ")
+        self.foo = True
+        self.stop()
+
+
 # Main function
 def run():
     # Discord intent setup for bot running
@@ -89,9 +114,29 @@ def run():
     @hat.command()
     async def chat(ctx, *, user_input):
         bot_response = gamme.genText(user_input)
-        await ctx.send(f"{ctx.author.mention}, {bot_response}")
-        print(f"Bot response to ({ctx.author}) with [{bot_response}]")
+
+        view = SimpleView(timeout = 5)
+
+        message =  await ctx.send(f"{ctx.author.mention}, {bot_response}", view=view)
+        view.message = message 
+        print(f"Bot response to ({ctx.author}) with: [{bot_response}]")
+
+        await view.wait()
+        await view.disable_buttons()
+
         
+        if view.foo is None:
+            print("No button was clicked")
+        elif view.foo is True:
+            bot_response = gamme.genText(user_input)
+            view = SimpleView(timeout = 5)
+            message =  await ctx.send(f"{ctx.author.mention}, {bot_response}", view=view)
+            view.message = message 
+            print(f"Bot response to ({ctx.author}) with: [{bot_response}]")
+            await view.wait()
+            await view.disable_buttons()
+            print(f"({ctx.author}) retry to generate the text context: [{bot_response}]")
+
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)
 
