@@ -12,9 +12,10 @@ import datetime
 import random
 import os
 
+
 class SimpleView(discord.ui.View):
 
-    foo : bool = None
+    foo: bool = None
 
     async def disable_buttons(self):
         for item in self.children:
@@ -63,15 +64,16 @@ def run():
         await member.add_roles(role)
 
         embed = discord.Embed(
-            title = f"**Welcome to Hogwarts !**",
-            description = f"**{member.mention}** come to the Hogwarts, but he/she is a **{role.name}** !!!",
-            color = 0xFF55FF,
-            timestamp = datetime.datetime.now(),
+            title=f"**Welcome to Hogwarts !**",
+            description=f"**{member.mention}** come to the Hogwarts, but he/she is a **{role.name}** !!!",
+            color=0xFF55FF,
+            timestamp=datetime.datetime.now(),
         )
 
         await channel.send(embed=embed)
-        print(f"({member}) join the server at ({datetime.datetime.now()}), assigned roll: [{role.name}]")
-
+        print(
+            f"({member}) join the server at ({datetime.datetime.now()}), assigned roll: [{role.name}]"
+        )
 
     # Server user rock check (Self check)
     @hat.command()
@@ -81,7 +83,9 @@ def run():
         if not roles:
             await ctx.send(f"{ctx.author.mention} doesn't have any roles.")
         else:
-            await ctx.send(f"{ctx.author.mention} has the following roles: {', '.join(roles)}")
+            await ctx.send(
+                f"{ctx.author.mention} has the following roles: {', '.join(roles)}"
+            )
         print(f"({ctx.author}) check the role")
 
     # User message response
@@ -94,7 +98,9 @@ def run():
         if bot_response == None:
             image_path = "images/what 7 you said.jpg"
             image_file = discord.File(image_path)
-            await ctx.send(f"{ctx.author.mention}, Sor, What 7 You Said Ar???",file = image_file)
+            await ctx.send(
+                f"{ctx.author.mention}, Sor, What 7 You Said Ar???", file=image_file
+            )
             print(f"Bot response to ({ctx.author}) with no understand input text")
         else:
             await ctx.send(f"{ctx.author.mention}, {bot_response}")
@@ -107,7 +113,10 @@ def run():
         dice_image = os.listdir(image_dir)
         image_path = image_dir + random.choice(dice_image)
         image_file = discord.File(image_path)
-        await ctx.send(f"Congratulation !!! {ctx.author.mention} you roll the number:", file = image_file)
+        await ctx.send(
+            f"Congratulation !!! {ctx.author.mention} you roll the number:",
+            file=image_file,
+        )
         print(f"({ctx.author}) roll the dice with [{image_path}]")
 
     # Chat with the bot using the Google Gamme 2b Model
@@ -115,30 +124,25 @@ def run():
     async def chat(ctx, *, user_input):
         bot_response = gamme.genText(user_input)
 
-        view = SimpleView(timeout = 5)
+        view = SimpleView(timeout=5)
 
-        message =  await ctx.send(f"{ctx.author.mention}, {bot_response}", view=view)
-        view.message = message 
+        message = await ctx.send(f"{ctx.author.mention}, {bot_response}", view=view)
+        view.message = message
         print(f"Bot response to ({ctx.author}) with: [{bot_response}]")
 
         await view.wait()
         await view.disable_buttons()
 
-        
         if view.foo is None:
             print("No button was clicked")
         elif view.foo is True:
             bot_response = gamme.genText(user_input)
-            view = SimpleView(timeout = 5)
-            message =  await ctx.send(f"{ctx.author.mention}, {bot_response}", view=view)
-            view.message = message 
-            print(f"Bot response to ({ctx.author}) with: [{bot_response}]")
-            await view.wait()
-            await view.disable_buttons()
+            await ctx.send(f"{ctx.author.mention}, {bot_response}")
             print(f"({ctx.author}) retry to generate the text context: [{bot_response}]")
 
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)
+
 
 if __name__ == "__main__":
     run()
