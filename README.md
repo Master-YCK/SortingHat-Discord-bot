@@ -4,21 +4,16 @@ In the hallowed halls of the world of digital magic, the SortingHat Discord bot 
 
 ## Table of Contents
 
-- [Magic Spell](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
+- [How to Use](#installation)
+- [Feature](#Feature)
 
 ## Installation
 
 Instructions on how to install and set up your project.
 
-## Usage
+## Feature
 
 Examples and instructions on how to use your project.
-
-## Contributing
-
-Guidelines for contributing to your project.
 
 ## License
 
