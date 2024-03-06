@@ -5,10 +5,9 @@ In the hallowed halls of the world of digital magic, the SortingHat Discord bot 
 ## Table of Contents
 
 - [Environment](#environment)
-
 - [How to Use](#installation)
-
-- [Feature](#Feature)
+- [Feature](#feature)
+- [Conclusion](#conclusion)
 
 ## Environment
 
@@ -46,10 +45,21 @@ The SortingHat-Discord Bot is built using discord.py 2.3.2 and Python 3.12.0. Th
 
 ## Feature
 
-Examples and instructions on how to use your project.
+### Current Support Bot Command 
 
-## License
+| Bot Command   | Description                      |
+| ------------- | ---------------------------------|
+| `./myrole`    | Check you self role in server    |
+| `./talk`      | Talk with the bot (Fix response) | 
+| `./roll`      | Randomly roll a Die              |
+| `./chat`      | ChatGPT function using Gemma 2   |
 
-Information about the license for your project.
+### Bot Function 
 
-SortingHat Discord Bot
+* New member joins the Auto-Distribution Server Membership Group
+* Welcome message for new members
+
+## Conclusion
+
+The project is still in the development phase and new features and commands will be added to the robot. Welcome to reference or directly use this warehouse, if you have better comments and ideas are also welcome to leave me a message, if you have encountered difficulties in the use, please feel free to leave a message, I do my best to provide help ～
+
