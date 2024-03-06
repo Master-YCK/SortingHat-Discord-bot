@@ -4,6 +4,7 @@ import response
 import gamme
 
 # Discord.py import
+import asyncio
 import discord
 from discord.ext import commands
 
@@ -106,6 +107,12 @@ def run():
             await ctx.send(f"{ctx.author.mention}, {bot_response}")
             print(f"Bot response to ({ctx.author}) with [{bot_response}]")
 
+    @hat.command()
+    async def response(ctx, input):
+        async with ctx.typing():
+            await asyncio.sleep(3)
+        await ctx.send(f"Hello, {ctx.author.mention}! You said: {input}")
+        
     # Roll the dice game
     @hat.command()
     async def roll(ctx):
@@ -121,12 +128,15 @@ def run():
 
     # Chat with the bot using the Google Gamme 2b Model
     @hat.command()
-    async def chat(ctx, *, user_input):
+    async def chat(ctx: commands.Context, *, user_input):
+        async with ctx.typing():
+            await asyncio.sleep(6)
+
         bot_response = gamme.genText(user_input)
 
         view = SimpleView(timeout=5)
 
-        message = await ctx.send(f"{ctx.author.mention}, {bot_response}", view=view)
+        message = await ctx.reply(f"{ctx.author.mention}, {bot_response}", view=view, ephemeral=True)
         view.message = message
         print(f"Bot response to ({ctx.author}) with: [{bot_response}]")
 
@@ -136,10 +146,12 @@ def run():
         if view.foo is None:
             print("No button was clicked")
         elif view.foo is True:
+            async with ctx.typing():
+                await asyncio.sleep(6)
             bot_response = gamme.genText(user_input)
-            await ctx.send(f"{ctx.author.mention}, {bot_response}")
+            await ctx.reply(f"{ctx.author.mention}, {bot_response}", ephemeral=True)
             print(f"({ctx.author}) retry to generate the text context: [{bot_response}]")
-
+            
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)
 
