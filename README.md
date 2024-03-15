@@ -21,7 +21,7 @@ The SortingHat-Discord Bot is built using discord.py 2.3.2 and Python 3.12.0. Th
 2. Step 1: to run this bot on your own computer, server or any device, you need the required pip installation package, the required pip package requirement.txt file has been created in the project.
 
 	```bash
-	pip install requirements.txt
+	pip install -r requirements.txt
 	```
 	
 3. Step 2: Create an ```.env``` file in the code directory and enter access to the Hugging Face LLM and your Discord Bot API access with create ```DISCORD_API_TOKEN``` and ```HF_TOKEN``` variable in the ```.env``` file ( Data type should be String ).

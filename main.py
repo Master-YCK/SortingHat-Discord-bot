@@ -2,6 +2,7 @@
 import setting
 import response
 import gamme
+import stable_diffusion
 
 # Discord.py import
 import asyncio
@@ -140,6 +141,19 @@ def run():
                 bot_response = gamme.genText(user_input)
             await ctx.reply(f"{ctx.author.mention}, {bot_response}", ephemeral=True)
             print(f"({ctx.author}) retry to generate the text context: [{bot_response}]")
+
+    # Chat with the bot using the RunwayML Stable Diffusion Model
+    @hat.command()
+    async def img(ctx: commands.Context, *, user_input):
+        async with ctx.typing():
+            img_Path = stable_diffusion.genImg(user_input)
+            image_file = discord.File(img_Path)
+            async with ctx.typing():
+                await ctx.reply(
+                    f"{ctx.author.mention} generated the image / picture with:",
+                    file=image_file,
+                )
+                print(f"({ctx.author}) generated the image in path:  [{img_Path}]")
             
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)

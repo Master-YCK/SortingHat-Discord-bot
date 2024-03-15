@@ -8,5 +8,5 @@ model = AutoModelForCausalLM.from_pretrained("google/gemma-2b", token=setting.HF
 
 def genText(input_text):
     input_ids = tokenizer(input_text, return_tensors="pt").to("mps")
-    outputs = model.generate(**input_ids, max_length=70, temperature=0.6, num_return_sequences=1)
+    outputs = model.generate(**input_ids, max_length=128)
     return tokenizer.decode(outputs[0])

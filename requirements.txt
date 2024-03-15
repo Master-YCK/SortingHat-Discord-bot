@@ -1,4 +1,4 @@
 discord.py
 python-dotenv
-'transformers[torch]'
+transformers[torch]
 accelerate
