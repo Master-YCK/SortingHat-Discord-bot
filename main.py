@@ -11,6 +11,7 @@ from discord.ext import commands
 
 # Python import
 import datetime
+from datetime import datetime 
 import random
 import os
 
@@ -123,13 +124,15 @@ def run():
     @hat.command()
     async def chat(ctx: commands.Context, *, user_input):
         async with ctx.typing():
+            begTime = datetime.now()
             bot_response = gamme.genText(user_input)
 
         view = SimpleView(timeout=5)
 
         message = await ctx.reply(f"{ctx.author.mention}, {bot_response}", view=view, ephemeral=True)
+        timeElapsed = (datetime.now() - begTime) * 0.001
         view.message = message
-        print(f"Bot response to ({ctx.author}) with: [{bot_response}]")
+        print(f"Bot response to ({ctx.author}) with: [{bot_response}] and Time: [{timeElapsed}]")
 
         await view.wait()
         await view.disable_buttons()
@@ -146,14 +149,16 @@ def run():
     @hat.command()
     async def img(ctx: commands.Context, *, user_input):
         async with ctx.typing():
-            img_Path = stable_diffusion.genImg(user_input)
-            image_file = discord.File(img_Path)
+            stable_diffusion.generate_image(user_input)
+            image_file = discord.File("generated.png")
+
             async with ctx.typing():
                 await ctx.reply(
-                    f"{ctx.author.mention} generated the image / picture with:",
+                    f"{ctx.author.mention} generated the image picture with:",
                     file=image_file,
                 )
-                print(f"({ctx.author}) generated the image in path:  [{img_Path}]")
+                
+        print(f"({ctx.author}) generated the image")
             
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)
