@@ -59,36 +59,60 @@ def run():
     async def on_member_join(member):
         channel = hat.get_channel(setting.WELCOME_CHANNEL)
         role = discord.utils.get(member.guild.roles, name="麻瓜")
-        metion = member.mention
-        guild = member.guild
         await member.add_roles(role)
 
         embed = discord.Embed(
-            title=f"**Welcome to Hogwarts !**",
-            description=f"**{metion}** come to the {guild}, but he/she is a **{role.name}** !!!",
+            title=f"**Welcome to {member.guild} !!!**",
+            description=f"**{member.mention}** come to the {member.guild}, but he/she is a **{role.name}** !!!",
             color=0xFF55FF,
             timestamp=datetime.now(),
         )
 
         embed.set_thumbnail(url=member.avatar.url)
         embed.set_footer(text=f"{member.guild}", icon_url=member.guild.icon)
-        embed.add_field(name="User ID", value=member.name)
-        embed.add_field(name="User Name", value=member.display_name)
-        embed.add_field(name="Server Serial", value=len(list(guild.members)))
-        embed.add_field(name="Create At", value=member.created_at.strftime("%Y-%m-%d %H:%M:%S"))
-        embed.add_field(name="Join At", value=member.joined_at.strftime("%Y-%m-%d %H:%M:%S"))
+        embed.add_field(name="User Name", value=member.name)
+        embed.add_field(name="AKA.", value=member.display_name)
+        embed.add_field(name="Server Serial", value=len(list(member.guild.members)))
+        embed.add_field(
+            name="Create At", value=member.created_at.strftime("%Y-%m-%d %H:%M:%S")
+        )
+        embed.add_field(
+            name="Join At", value=member.joined_at.strftime("%Y-%m-%d %H:%M:%S")
+        )
         await channel.send(embed=embed)
 
         print(
             f"({member}) join the server at ({datetime.now()}), assigned roll: [{role.name}]"
         )
 
-    # Leave message
+    # A member leave message
     @hat.event
     async def on_member_remove(member):
         channel = hat.get_channel(setting.WELCOME_CHANNEL)
-        await channel.send(f"**{member}** has left the Hogwarts.")
+        await channel.send(f"**{member.name}** has left the Hogwarts.")
         print(f"({member}) has leave the server at ({datetime.now()})]")
+
+    # Error message handling with different type of error
+    @hat.event
+    async def on_command_error(ctx, error):
+        if isinstance(error, commands.CommandNotFound):
+            async with ctx.typing():
+                await ctx.reply(
+                    f"{ctx.author.mention}. We don't have this, check the memu try again !!!."
+                )
+            print(f"({ctx.author}) entered the wrong command")
+        elif isinstance(error, commands.MissingRequiredArgument):
+            async with ctx.typing():
+                await ctx.reply(
+                    f"{ctx.author.mention}. Child you missing something, think about that !!!."
+                )
+            print(f"({ctx.author}) entered the wrong argument")
+        elif isinstance(error, commands.MissingPermissions):
+            async with ctx.typing():
+                await ctx.reply(
+                    f"{ctx.author.mention}. How Dare You To Do This !!!."
+                )
+            print(f"({ctx.author}) entered the wrong permission")
 
     # Server user rock check (Self check)
     @hat.command()
