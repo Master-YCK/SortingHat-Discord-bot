@@ -11,9 +11,10 @@ from discord.ext import commands
 
 # Python import
 import datetime
-from datetime import datetime 
+from datetime import datetime
 import random
 import os
+
 
 # The button view class
 class SimpleView(discord.ui.View):
@@ -33,6 +34,7 @@ class SimpleView(discord.ui.View):
         await interaction.response.send_message("The Retry Generate: ")
         self.foo = True
         self.stop()
+
 
 # Main function
 def run():
@@ -57,19 +59,36 @@ def run():
     async def on_member_join(member):
         channel = hat.get_channel(setting.WELCOME_CHANNEL)
         role = discord.utils.get(member.guild.roles, name="麻瓜")
+        metion = member.mention
+        guild = member.guild
         await member.add_roles(role)
 
         embed = discord.Embed(
             title=f"**Welcome to Hogwarts !**",
-            description=f"**{member.mention}** come to the Hogwarts, but he/she is a **{role.name}** !!!",
+            description=f"**{metion}** come to the {guild}, but he/she is a **{role.name}** !!!",
             color=0xFF55FF,
-            timestamp=datetime.datetime.now(),
+            timestamp=datetime.now(),
         )
 
+        embed.set_thumbnail(url=member.avatar.url)
+        embed.set_footer(text=f"{member.guild}", icon_url=member.guild.icon)
+        embed.add_field(name="User ID", value=member.name)
+        embed.add_field(name="User Name", value=member.display_name)
+        embed.add_field(name="Server Serial", value=len(list(guild.members)))
+        embed.add_field(name="Create At", value=member.created_at.strftime("%Y-%m-%d %H:%M:%S"))
+        embed.add_field(name="Join At", value=member.joined_at.strftime("%Y-%m-%d %H:%M:%S"))
         await channel.send(embed=embed)
+
         print(
-            f"({member}) join the server at ({datetime.datetime.now()}), assigned roll: [{role.name}]"
+            f"({member}) join the server at ({datetime.now()}), assigned roll: [{role.name}]"
         )
+
+    # Leave message
+    @hat.event
+    async def on_member_remove(member):
+        channel = hat.get_channel(setting.WELCOME_CHANNEL)
+        await channel.send(f"**{member}** has left the Hogwarts.")
+        print(f"({member}) has leave the server at ({datetime.now()})]")
 
     # Server user rock check (Self check)
     @hat.command()
@@ -105,7 +124,7 @@ def run():
             async with ctx.typing():
                 await ctx.reply(f"{ctx.author.mention}, {bot_response}")
             print(f"Bot response to ({ctx.author}) with [{bot_response}]")
-        
+
     # Roll the dice game
     @hat.command()
     async def roll(ctx: commands.Context):
@@ -129,10 +148,14 @@ def run():
 
         view = SimpleView(timeout=5)
 
-        message = await ctx.reply(f"{ctx.author.mention}, {bot_response}", view=view, ephemeral=True)
+        message = await ctx.reply(
+            f"{ctx.author.mention}, {bot_response}", view=view, ephemeral=True
+        )
         timeElapsed = (datetime.now() - begTime) * 0.001
         view.message = message
-        print(f"Bot response to ({ctx.author}) with: [{bot_response}] and Time: [{timeElapsed}]")
+        print(
+            f"Bot response to ({ctx.author}) with: [{bot_response}] and Time: [{timeElapsed}]"
+        )
 
         await view.wait()
         await view.disable_buttons()
@@ -143,7 +166,9 @@ def run():
             async with ctx.typing():
                 bot_response = gamme.genText(user_input)
             await ctx.reply(f"{ctx.author.mention}, {bot_response}", ephemeral=True)
-            print(f"({ctx.author}) retry to generate the text context: [{bot_response}]")
+            print(
+                f"({ctx.author}) retry to generate the text context: [{bot_response}]"
+            )
 
     # Chat with the bot using the RunwayML Stable Diffusion Model
     @hat.command()
@@ -157,11 +182,12 @@ def run():
                     f"{ctx.author.mention} generated the image picture with:",
                     file=image_file,
                 )
-                
+
         print(f"({ctx.author}) generated the image")
-            
+
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)
+
 
 if __name__ == "__main__":
     run()
