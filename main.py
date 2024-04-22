@@ -212,6 +212,5 @@ def run():
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)
 
-
 if __name__ == "__main__":
     run()
