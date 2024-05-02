@@ -117,9 +117,10 @@ def run():
             print(f"({ctx.author}) entered the wrong permission")
 
     # Bot Slash command list
-    @hat.tree.command(name="hi", description="Say HI to a user!")
-    async def hi(interaction: discord.interactions, user: discord.Member):
+    @hat.tree.command(name="hello", description="Say HI to a user!")
+    async def hello(interaction: discord.interactions, user: discord.Member):
         await interaction.response.send_message(f"Hi {user.mention} !!!", ephemeral=True)
+        print(f"{interaction.user.name} used the slash command")
 
     # Bot command list
     # Server user rock check (Self check)
