@@ -3,7 +3,6 @@ import setting
 import response
 
 # Discord.py import
-import asyncio
 import discord
 from discord.ext import commands
 
@@ -12,7 +11,6 @@ import datetime
 from datetime import datetime
 import random
 import os
-
 
 # The button view class
 class SimpleView(discord.ui.View):
@@ -33,9 +31,9 @@ class SimpleView(discord.ui.View):
         self.foo = True
         self.stop()
 
-
-# Main function
+# Main function & bot running
 def run():
+
     # Discord intent setup for bot running
     intents = discord.Intents.default()
     intents.message_content = True
@@ -111,7 +109,13 @@ def run():
                     f"{ctx.author.mention}. How Dare You To Do This !!!."
                 )
             print(f"({ctx.author}) entered the wrong permission")
+            
+    # Bot Slash command list
+    @hat.slash_command(name="hi", description="Say HI to a user!")
+    async def hi(ctx, user: discord.Member):
+        await ctx.respond(f"HI {user.mention}!")
 
+    # Bot command list
     # Server user rock check (Self check)
     @hat.command()
     async def myrole(ctx: commands.Context):
