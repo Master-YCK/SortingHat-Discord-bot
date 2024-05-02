@@ -50,6 +50,12 @@ def run():
         print("** Magic Start **")
         print("--------------------")
 
+        try:
+            synced = await hat.tree.sync()
+            print(f"Synced {synced} commands")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
     # Welcome message and auto assign a user role
     @hat.event
     async def on_member_join(member):
@@ -109,11 +115,11 @@ def run():
                     f"{ctx.author.mention}. How Dare You To Do This !!!."
                 )
             print(f"({ctx.author}) entered the wrong permission")
-            
+
     # Bot Slash command list
-    @hat.slash_command(name="hi", description="Say HI to a user!")
-    async def hi(ctx, user: discord.Member):
-        await ctx.respond(f"HI {user.mention}!")
+    @hat.tree.command(name="hi", description="Say HI to a user!")
+    async def hi(interaction: discord.interactions, user: discord.Member):
+        await interaction.response.send_message(f"Hi {user.mention} !!!", ephemeral=True)
 
     # Bot command list
     # Server user rock check (Self check)
