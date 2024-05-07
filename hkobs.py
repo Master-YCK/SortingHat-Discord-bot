@@ -8,10 +8,19 @@ def get_weather(dataType, lang):
     url = f"https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType={dataType}&lang={lang}"
     try:
         response = requests.get(url)
-        return response.json()
+        if response.status_code == 200:
+            # Load the JSON response
+            data = response.json()
+
+            # Access specific data from the JSON response
+            print(data['generalSituation'])  # Replace 'key' with the actual key you want to access
+
+            info = data['generalSituation']
+            return info
+        else:
+            print('Failed to retrieve data:', response.status_code)
     except requests.exceptions.RequestException as e:
         print('Error Info:', e)
-        return None
 
 class HKOBS(app_commands.Group):
     @app_commands.command()
@@ -23,5 +32,5 @@ class HKOBS(app_commands.Group):
         else:
             await interaction.response.send_message('Failed to get the weather data.')
 
-async def setup(hat):
-    hat.tree.add_command(HKOBS(name='hkobs', description='Get the weather information from the HKOBS'))
+async def setup(bot):
+    bot.tree.add_command(HKOBS(name="hkobs", description="Get the weather information from the HKOBS"))
