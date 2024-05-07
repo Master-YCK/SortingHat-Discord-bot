@@ -42,6 +42,14 @@ def run():
 
     hat = commands.Bot(command_prefix="./", intents=intents)
 
+    async def sync_commands():
+        try:
+            await hat.load_extension("hkobs")
+            synced = await hat.tree.sync()
+            print(f"Synced {synced} commands")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
     # Bot running message
     @hat.event
     async def on_ready():
@@ -51,14 +59,8 @@ def run():
         print("** Magic Start **")
         print("--------------------")
 
-    # Sync the slash command to the discord server    
-        try:
-            await hat.load_extension("hkobs")
-            synced = await hat.tree.sync()
-            print(f"Synced {synced} commands")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-    
+        await sync_commands()
+
     # Welcome message and auto assign a user role
     @hat.event
     async def on_member_join(member):
@@ -120,7 +122,7 @@ def run():
             print(f"({ctx.author}) entered the wrong permission")
 
     # Bot Slash command list
-    @hat.tree.command(name="hello", description="Say HI to a user!")
+    @hat.tree.command(name="hello", description="Say Hello to someone!")
     async def hello(interaction: discord.interactions, user: discord.Member):
         await interaction.response.send_message(f"Hi {user.mention} !!!")
         print(f"{interaction.user.name} used the slash command")
