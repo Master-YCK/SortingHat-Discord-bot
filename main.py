@@ -1,11 +1,11 @@
 # Project file import
 import setting
 import response
+from components import embedComp
 
 # Discord.py import
 import discord
 from discord.ext import commands
-from discord import app_commands
 
 # Python import
 import datetime
@@ -121,6 +121,7 @@ def run():
                 )
             print(f"({ctx.author}) entered the wrong permission")
 
+    # Bot command list
     # Bot Slash command list
     @hat.tree.command(name="hello", description="Say Hello to someone!")
     async def hello(interaction: discord.interactions, user: discord.Member):
@@ -132,8 +133,6 @@ def run():
         await interaction.response.send_message(f"Member Joined: {discord.utils.format_dt(user.joined_at)}", ephemeral=True)
         print(f"{interaction.user.name} used the slash command")
 
-
-    # Bot command list
     # Server user rock check (Self check)
     @hat.command()
     async def myrole(ctx: commands.Context):
