@@ -60,6 +60,8 @@ def run():
         print("--------------------")
 
         await sync_commands()
+        
+        hat.loop.create_task(hat.change_presence(activity=discord.Game(name="Ah, yes. Uh, yeah. There you go! Magic!!!")))
 
     # Welcome message and auto assign a user role
     @hat.event
