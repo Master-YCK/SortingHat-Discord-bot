@@ -1,20 +1,17 @@
 # Project file import
 import setting
 import response
-import gamme
-import stable_diffusion
 
 # Discord.py import
-import asyncio
 import discord
 from discord.ext import commands
+from discord import app_commands
 
 # Python import
 import datetime
 from datetime import datetime
 import random
 import os
-
 
 # The button view class
 class SimpleView(discord.ui.View):
@@ -35,15 +32,23 @@ class SimpleView(discord.ui.View):
         self.foo = True
         self.stop()
 
-
-# Main function
+# Main function & bot running
 def run():
+
     # Discord intent setup for bot running
     intents = discord.Intents.default()
     intents.message_content = True
     intents.members = True
 
     hat = commands.Bot(command_prefix="./", intents=intents)
+
+    async def sync_commands():
+        try:
+            await hat.load_extension("hkobs")
+            synced = await hat.tree.sync()
+            print(f"Synced {synced} commands")
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     # Bot running message
     @hat.event
@@ -53,6 +58,8 @@ def run():
         print(hat.user.id)
         print("** Magic Start **")
         print("--------------------")
+
+        await sync_commands()
 
     # Welcome message and auto assign a user role
     @hat.event
@@ -114,6 +121,19 @@ def run():
                 )
             print(f"({ctx.author}) entered the wrong permission")
 
+    # Bot Slash command list
+    @hat.tree.command(name="hello", description="Say Hello to someone!")
+    async def hello(interaction: discord.interactions, user: discord.Member):
+        await interaction.response.send_message(f"Hi {user.mention} !!!")
+        print(f"{interaction.user.name} used the slash command")
+
+    @hat.tree.context_menu(name="Show Join Date")
+    async def user_info(interaction: discord.interactions, user: discord.Member):
+        await interaction.response.send_message(f"Member Joined: {discord.utils.format_dt(user.joined_at)}", ephemeral=True)
+        print(f"{interaction.user.name} used the slash command")
+
+
+    # Bot command list
     # Server user rock check (Self check)
     @hat.command()
     async def myrole(ctx: commands.Context):
@@ -162,52 +182,6 @@ def run():
                 file=image_file,
             )
         print(f"({ctx.author}) roll the dice with [{image_path}]")
-
-    # Chat with the bot using the Google Gamme 2b Model
-    @hat.command()
-    async def chat(ctx: commands.Context, *, user_input):
-        async with ctx.typing():
-            begTime = datetime.now()
-            bot_response = gamme.genText(user_input)
-
-        view = SimpleView(timeout=5)
-
-        message = await ctx.reply(
-            f"{ctx.author.mention}, {bot_response}", view=view, ephemeral=True
-        )
-        timeElapsed = (datetime.now() - begTime) * 0.001
-        view.message = message
-        print(
-            f"Bot response to ({ctx.author}) with: [{bot_response}] and Time: [{timeElapsed}]"
-        )
-
-        await view.wait()
-        await view.disable_buttons()
-
-        if view.foo is None:
-            print("No button was clicked")
-        elif view.foo is True:
-            async with ctx.typing():
-                bot_response = gamme.genText(user_input)
-            await ctx.reply(f"{ctx.author.mention}, {bot_response}", ephemeral=True)
-            print(
-                f"({ctx.author}) retry to generate the text context: [{bot_response}]"
-            )
-
-    # Chat with the bot using the RunwayML Stable Diffusion Model
-    @hat.command()
-    async def img(ctx: commands.Context, *, user_input):
-        async with ctx.typing():
-            stable_diffusion.generate_image(user_input)
-            image_file = discord.File("generated.png")
-
-            async with ctx.typing():
-                await ctx.reply(
-                    f"{ctx.author.mention} generated the image picture with:",
-                    file=image_file,
-                )
-
-        print(f"({ctx.author}) generated the image")
 
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)
