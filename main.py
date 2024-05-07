@@ -119,7 +119,7 @@ def run():
     # Bot Slash command list
     @hat.tree.command(name="hello", description="Say HI to a user!")
     async def hello(interaction: discord.interactions, user: discord.Member):
-        await interaction.response.send_message(f"Hi {user.mention} !!!", ephemeral=True)
+        await interaction.response.send_message(f"Hi {user.mention} !!!")
         print(f"{interaction.user.name} used the slash command")
 
     # Bot command list
