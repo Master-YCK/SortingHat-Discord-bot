@@ -8,29 +8,32 @@ def get_weather(dataType, lang):
     url = f"https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType={dataType}&lang={lang}"
     try:
         response = requests.get(url)
-        if response.status_code == 200:
-            # Load the JSON response
-            data = response.json()
+        # Load the JSON response
+        data = response.json()
 
-            # Access specific data from the JSON response
-            print(data['generalSituation'])  # Replace 'key' with the actual key you want to access
+        # Access specific data from the JSON response
+        print(f"API JSON DATA: {data['generalSituation']}")  # Replace 'key' with the actual key you want to access
 
-            info = data['generalSituation']
-            return info
-        else:
-            print('Failed to retrieve data:', response.status_code)
+        return data
     except requests.exceptions.RequestException as e:
         print('Error Info:', e)
 
 class HKOBS(app_commands.Group):
-    @app_commands.command()
-    async def flw(self, interaction: discord.Interaction):
+    @app_commands.command(name="flw", description="本港地區天氣預報")
+    @app_commands.describe(lang="Choose the language")
+    @app_commands.choices(lang=[
+        discord.app_commands.Choice(name='English', value='en'),
+        discord.app_commands.Choice(name='繁體中文', value='tc'),
+        discord.app_commands.Choice(name='简体中文', value='sc')
+    ])
+    async def flw(self, interaction: discord.Interaction, lang: discord.app_commands.Choice[str]):
         # Get the forecast data
-        data = get_weather('flw', 'en')
+        data = get_weather('flw', f"{lang.value}")
         if data:
-            await interaction.response.send_message(data)
+
+            await interaction.response.send_message(f"{data['generalSituation']}")
         else:
             await interaction.response.send_message('Failed to get the weather data.')
 
-async def setup(bot):
-    bot.tree.add_command(HKOBS(name="hkobs", description="Get the weather information from the HKOBS"))
+async def setup(hat):
+    hat.tree.add_command(HKOBS(name="hkobs", description="Weather Info From HKOBS API"))

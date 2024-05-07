@@ -5,6 +5,7 @@ import response
 # Discord.py import
 import discord
 from discord.ext import commands
+from discord import app_commands
 
 # Python import
 import datetime
@@ -50,14 +51,14 @@ def run():
         print("** Magic Start **")
         print("--------------------")
 
-        await hat.load_extension("hkobs")
-
+    # Sync the slash command to the discord server    
         try:
+            await hat.load_extension("hkobs")
             synced = await hat.tree.sync()
             print(f"Synced {synced} commands")
         except Exception as e:
             print(f"An error occurred: {e}")
-
+    
     # Welcome message and auto assign a user role
     @hat.event
     async def on_member_join(member):
@@ -123,6 +124,12 @@ def run():
     async def hello(interaction: discord.interactions, user: discord.Member):
         await interaction.response.send_message(f"Hi {user.mention} !!!")
         print(f"{interaction.user.name} used the slash command")
+
+    @hat.tree.context_menu(name="Show Join Date")
+    async def user_info(interaction: discord.interactions, user: discord.Member):
+        await interaction.response.send_message(f"Member Joined: {discord.utils.format_dt(user.joined_at)}", ephemeral=True)
+        print(f"{interaction.user.name} used the slash command")
+
 
     # Bot command list
     # Server user rock check (Self check)
