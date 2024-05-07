@@ -50,6 +50,8 @@ def run():
         print("** Magic Start **")
         print("--------------------")
 
+        await hat.load_extension("hkobs")
+
         try:
             synced = await hat.tree.sync()
             print(f"Synced {synced} commands")
