@@ -110,12 +110,14 @@ def run():
                     f"{ctx.author.mention}. We don't have this, check the memu try again !!!."
                 )
             print(f"({ctx.author}) entered the wrong command")
+            
         elif isinstance(error, commands.MissingRequiredArgument):
             async with ctx.typing():
                 await ctx.reply(
                     f"{ctx.author.mention}. Child you missing something, think about that !!!."
                 )
             print(f"({ctx.author}) entered the wrong argument")
+
         elif isinstance(error, commands.MissingPermissions):
             async with ctx.typing():
                 await ctx.reply(
