@@ -88,8 +88,11 @@ class HKOBS(app_commands.Group):
             embed.add_field(name="Place", value=data['temperature']['data'][place.value]['place'])
             embed.add_field(name="Temperature", value=f"{data['temperature']['data'][place.value]['value']}°")
             embed.add_field(name="Humidity", value=f"{data['humidity']['data'][0]['value']}%")
-            embed.add_field(name="UV Index", value=data['uvindex']['data'][0]['value'])
-            embed.add_field(name="UV Index Desc", value=data['uvindex']['data'][0]['desc'])
+            
+            if data['uvindex'] != 'N/A':
+                embed.add_field(name="UV Index", value=data['uvindex']['data'][0]['value'])
+                embed.add_field(name="UV Index Desc", value=data['uvindex']['data'][0]['desc'])
+
             embed.add_field(name="Update time", value=datetime.fromisoformat(data['temperature']['recordTime'].removesuffix('Z')).strftime('%Y-%m-%d %H:%M:%S'))
             embed.set_footer(text="Data provided by the Hong Kong Observatory", icon_url="attachment://hko_trade_mark.png")
             await interaction.response.send_message(file=file, embed=embed)
