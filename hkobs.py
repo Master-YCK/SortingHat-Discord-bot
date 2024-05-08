@@ -84,9 +84,12 @@ class HKOBS(app_commands.Group):
         data = replace_null(get_weather('rhrread', f"{lang.value}"))
         if data:
             place_name()
-            embed = embedComp.cuz_embed("***Today's weather in Hong Kong***", "", 0x004a87, datetime.now())
+            embed = embedComp.cuz_embed(f"***Today's weather in {data['temperature']['data'][place.value]['place']}***", "", 0x004a87, datetime.now())
             embed.add_field(name="Place", value=data['temperature']['data'][place.value]['place'])
             embed.add_field(name="Temperature", value=f"{data['temperature']['data'][place.value]['value']}°")
+            embed.add_field(name="Humidity", value=f"{data['humidity']['data'][0]['value']}%")
+            embed.add_field(name="UV Index", value=data['uvindex']['data'][0]['value'])
+            embed.add_field(name="UV Index Desc", value=data['uvindex']['data'][0]['desc'])
             embed.add_field(name="Update time", value=datetime.fromisoformat(data['temperature']['recordTime'].removesuffix('Z')).strftime('%Y-%m-%d %H:%M:%S'))
             embed.set_footer(text="Data provided by the Hong Kong Observatory", icon_url="attachment://hko_trade_mark.png")
             await interaction.response.send_message(file=file, embed=embed)
