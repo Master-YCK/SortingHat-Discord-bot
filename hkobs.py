@@ -8,6 +8,8 @@ from components import embedComp
 from discord import app_commands
 
 hkobsLogo = "https://www.weather.gov.hk/en/abouthko/logoexplain/images/HKOLogo-color-symbol.png"
+iconIndex = None
+weatjerIcon = f"https://www.hko.gov.hk/images/HKOWxIconOutline/pic{iconIndex}.png"
 
 def replace_null(data):
     # Replace the null value with a string
@@ -39,6 +41,12 @@ def place_name():
         placeList.append(discord.app_commands.Choice(name=f"{cnData['temperature']['data'][i]['place']}({enData['temperature']['data'][i]['place']})", value=i))
     return placeList[0:25]
 
+def icon_index(data):
+    iconIndex = []
+    for i in range(len(data['icon'])):
+        iconIndex.append(i)
+    return iconIndex
+
 class HKOBS(app_commands.Group):
     # The commands checking the weather information
     @app_commands.command(name="flw", description="本港地區天氣預報(Weather Forecast)")
@@ -54,7 +62,7 @@ class HKOBS(app_commands.Group):
         data = replace_null(get_weather('flw', f"{lang.value}"))
         if data:
             embed = embedComp.cuz_embed("***Weather forecast for Hong Kong***", "", 0x004a87, datetime.now())
-            embed.add_field(name="Overview", value=data['generalSituation'])
+            embed.add_field(name="Overview", value=data['generalSituation'], inline=False)
             if data['tcInfo'] != 'N/A':
                 embed.add_field(name="Tropical Cyclone Information", value=data['tcInfo'])
             if data['fireDangerWarning'] != 'N/A':
@@ -102,8 +110,7 @@ class HKOBS(app_commands.Group):
     @app_commands.command(name="test")
     async def test(self, interaction: discord.Interaction):
         embed = embedComp.cuz_embed("***My Embed***", "Test", None, None)
-        embed.set_footer(text="Data provided by the Hong Kong Observatory", icon_url=hkobsLogo)
-        await interaction.response.send_message(embed=embed)    
+        await interaction.response.send_message(embed=embed)
 
 async def setup(hat):
     hat.tree.add_command(HKOBS(name="hkobs", description="Weather Info From HKOBS API"))
