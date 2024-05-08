@@ -7,7 +7,7 @@ from datetime import datetime
 from components import embedComp
 from discord import app_commands
 
-file = discord.File("images/hkobs/hko_trade_mark.png", filename="hko_trade_mark.png")
+hkobsLogo = "https://www.weather.gov.hk/en/abouthko/logoexplain/images/HKOLogo-color-symbol.png"
 
 def replace_null(data):
     # Replace the null value with a string
@@ -63,8 +63,8 @@ class HKOBS(app_commands.Group):
             embed.add_field(name="Forecast", value=data['forecastDesc'])
             embed.add_field(name="Forecast period", value=data['forecastPeriod'])
             embed.add_field(name="Update time", value=datetime.fromisoformat(data['updateTime'].removesuffix('Z')).strftime('%Y-%m-%d %H:%M:%S'))
-            embed.set_footer(text="Data provided by the Hong Kong Observatory", icon_url="attachment://hko_trade_mark.png")
-            await interaction.response.send_message(file=file, embed=embed)
+            embed.set_footer(text="Data provided by the Hong Kong Observatory", icon_url=hkobsLogo)
+            await interaction.response.send_message(embed=embed)
         else:
             await interaction.response.send_message('Failed to get the weather data.')
 
@@ -94,14 +94,15 @@ class HKOBS(app_commands.Group):
                 embed.add_field(name="UV Index Desc", value=data['uvindex']['data'][0]['desc'])
 
             embed.add_field(name="Update time", value=datetime.fromisoformat(data['temperature']['recordTime'].removesuffix('Z')).strftime('%Y-%m-%d %H:%M:%S'))
-            embed.set_footer(text="Data provided by the Hong Kong Observatory", icon_url="attachment://hko_trade_mark.png")
-            await interaction.response.send_message(file=file, embed=embed)
+            embed.set_footer(text="Data provided by the Hong Kong Observatory", icon_url=hkobsLogo)
+            await interaction.response.send_message(embed=embed)
         else:
             await interaction.response.send_message('Failed to get the weather data.')
 
     @app_commands.command(name="test")
     async def test(self, interaction: discord.Interaction):
         embed = embedComp.cuz_embed("***My Embed***", "Test", None, None)
+        embed.set_footer(text="Data provided by the Hong Kong Observatory", icon_url=hkobsLogo)
         await interaction.response.send_message(embed=embed)    
 
 async def setup(hat):
