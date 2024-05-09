@@ -6,12 +6,14 @@ from components import embedComp
 # Discord.py import
 import discord
 from discord.ext import commands
+from discord import app_commands
 
 # Python import
 import datetime
 from datetime import datetime
 import random
 import os
+import typing
 
 # The button view class
 class SimpleView(discord.ui.View):
@@ -52,12 +54,26 @@ def run():
             print(f"An error occurred: {e}")
 
     # MBTI list for the user to choose
-    def mbti_list():
-        mbtiList = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP']
+    async def mbti_autocompletion(
+            interaction: discord.interactions,
+            current: str
+    ) -> typing.List[app_commands.Choice[str]]:
         choiseList = []
-        for i in range(mbtiList):
-            choiseList.append(discord.app_commands.Choice(name=f"{mbtiList[i]}", value=mbtiList[i]))
+        for item in ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP']:
+            if current.upper() in item.upper():
+                choiseList.append(app_commands.Choice(name=item, value=item))
         return choiseList
+
+    # MBTI color for the user role
+    def mbti_color(mbtiType):
+        if mbtiType == 'INTJ' or mbtiType == 'INTP' or mbtiType == 'ENTJ' or mbtiType == 'ENTP':
+            return 0x88619a
+        elif mbtiType == 'INFJ' or mbtiType == 'INFP' or mbtiType == 'ENFJ' or mbtiType == 'ENFP':
+            return 0x33a474
+        elif mbtiType == 'ISTJ' or mbtiType == 'ISFJ' or mbtiType == 'ESTJ' or mbtiType == 'ESFJ':
+            return 0x4298b4
+        elif mbtiType == 'ISTP' or mbtiType == 'ISFP' or mbtiType == 'ESTP' or mbtiType == 'ESFP':
+            return 0xe4ae3a
 
     # Bot running message
     @hat.event
@@ -143,18 +159,21 @@ def run():
 
     # Slash command to assign a user role of user MBTI
     @hat.tree.command(name="mbti", description="Add your MBTI")
+    @app_commands.autocomplete(mbti=mbti_autocompletion)
     async def mbti(interaction: discord.interactions, mbti: str):
         role = discord.utils.get(interaction.guild.roles, name=mbti)
         if role:
             await interaction.user.add_roles(role)
             await interaction.response.send_message(f"Role {role.name} added to {interaction.user.mention}")
+            print(f"{interaction.user.name} add the {role.name} role")
         elif not role:
-            role = await interaction.guild.create_role(name=mbti)
+            role = await interaction.guild.create_role(name=mbti, color=mbti_color(mbti))
             await interaction.user.add_roles(role)
             await interaction.response.send_message(f"Role {role.name} added to {interaction.user.mention}")
+            print(f"{interaction.user.name} create a {role.name} role of the server")
         else:
             await interaction.response.send_message(f"Can't assign the MBTI role for you", ephemeral=True)
-        print(f"{interaction.user.name} used the slash command")
+            print(f"{interaction.user.name} used the slash command")
 
     # Slash command to check the bot latency
     @hat.tree.command(name="ping", description="Check the bot latency")
