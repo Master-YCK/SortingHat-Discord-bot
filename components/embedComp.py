@@ -1,8 +1,11 @@
 import discord
 
 def cuz_embed (tile, des, col, dt):
-    
-    if col == None:
+    if tile == None:
+        tile = ''
+    elif des == None:
+        des = ''
+    elif col == None:
         col = discord.Color.random()
     elif dt == None:
         dt = ''

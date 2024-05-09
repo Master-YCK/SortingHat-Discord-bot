@@ -159,6 +159,7 @@ def run():
 
     # Slash command to assign a user role of user MBTI
     @hat.tree.command(name="mbti", description="Add your MBTI")
+    @app_commands.describe(mbti="Choose or Type your MBTI type")
     @app_commands.autocomplete(mbti=mbti_autocompletion)
     async def mbti(interaction: discord.interactions, mbti: str):
         role = discord.utils.get(interaction.guild.roles, name=mbti)
@@ -184,16 +185,24 @@ def run():
     # Slash command to show the bot command list
     @hat.tree.command(name="help", description="Show the bot command list")
     async def help(interaction: discord.interactions):
-        embed = embedComp.cuz_embed("Bot Command List", "", None, datetime.now())
-        embed.add_field(name="Hello", value="Say Hello to someone!")
-        embed.add_field(name="MBTI", value="Add your MBTI")
-        embed.add_field(name="Ping", value="Check the bot latency")
-        embed.add_field(name="Help", value="Show the bot command list")
+        embed = embedComp.cuz_embed("How to use magic", None, discord.Color.random(), datetime.now())
+        embed.set_thumbnail(url=hat.user.avatar.url)
+        embed.set_author(name=hat.user.name, icon_url=hat.user.avatar.url)
+        embed.add_field(name="", value="***Slash Command List***", inline=False)
+        embed.add_field(name="/Hello", value="Say Hello to someone!")
+        embed.add_field(name="/MBTI", value="Add your MBTI")
+        embed.add_field(name="/Ping", value="Check the bot latency")
+        embed.add_field(name="/Help", value="Show the bot command list")
+        embed.add_field(name="", value="", inline=False)
+        embed.add_field(name="", value="***Command List***", inline=False)
+        embed.add_field(name="./My Role", value="Server user rock check (Self check)")
+        embed.add_field(name="./Talk", value="User message response")
+        embed.add_field(name="./Roll", value="Roll the dice game")
+        embed.add_field(name="", value="", inline=False)
+        embed.add_field(name="", value="***Context Menu***", inline=False)
         embed.add_field(name="Show Join Date", value="Show the user join date")
         embed.add_field(name="Show Role List", value="Show a user role he/she has")
-        embed.add_field(name="My Role", value="Server user rock check (Self check)")
-        embed.add_field(name="Talk", value="User message response")
-        embed.add_field(name="Roll", value="Roll the dice game")
+        embed.set_footer(text="Prower provided by the Hogwarts", icon_url=hat.user.avatar.url)
         await interaction.response.send_message(embed=embed)
         print(f"{interaction.user.name} used the slash command")
 
