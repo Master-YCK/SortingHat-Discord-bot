@@ -42,6 +42,7 @@ def run():
 
     hat = commands.Bot(command_prefix="./", intents=intents)
 
+    # Sync the bot command
     async def sync_commands():
         try:
             await hat.load_extension("hkobs")
@@ -49,6 +50,14 @@ def run():
             print(f"Synced {synced} commands")
         except Exception as e:
             print(f"An error occurred: {e}")
+
+    # MBTI list for the user to choose
+    def mbti_list():
+        mbtiList = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP']
+        choiseList = []
+        for i in range(mbtiList):
+            choiseList.append(discord.app_commands.Choice(name=f"{mbtiList[i]}", value=mbtiList[i]))
+        return choiseList
 
     # Bot running message
     @hat.event
@@ -132,9 +141,63 @@ def run():
         await interaction.response.send_message(f"Hi {user.mention} !!!")
         print(f"{interaction.user.name} used the slash command")
 
+    # Slash command to assign a user role of user MBTI
+    @hat.tree.command(name="mbti", description="Add your MBTI")
+    async def mbti(interaction: discord.interactions, mbti: str):
+        role = discord.utils.get(interaction.guild.roles, name=mbti)
+        if role:
+            await interaction.user.add_roles(role)
+            await interaction.response.send_message(f"Role {role.name} added to {interaction.user.mention}")
+        elif not role:
+            role = await interaction.guild.create_role(name=mbti)
+            await interaction.user.add_roles(role)
+            await interaction.response.send_message(f"Role {role.name} added to {interaction.user.mention}")
+        else:
+            await interaction.response.send_message(f"Can't assign the MBTI role for you", ephemeral=True)
+        print(f"{interaction.user.name} used the slash command")
+
+    # Slash command to check the bot latency
+    @hat.tree.command(name="ping", description="Check the bot latency")
+    async def ping(interaction: discord.interactions):
+        await interaction.response.send_message(f"Pong! {round(hat.latency * 1000)}ms")
+        print(f"{interaction.user.name} used the slash command")
+
+    # Slash command to show the bot command list
+    @hat.tree.command(name="help", description="Show the bot command list")
+    async def help(interaction: discord.interactions):
+        embed = embedComp.cuz_embed("Bot Command List", "", None, datetime.now())
+        embed.add_field(name="Hello", value="Say Hello to someone!")
+        embed.add_field(name="MBTI", value="Add your MBTI")
+        embed.add_field(name="Ping", value="Check the bot latency")
+        embed.add_field(name="Help", value="Show the bot command list")
+        embed.add_field(name="Show Join Date", value="Show the user join date")
+        embed.add_field(name="Show Role List", value="Show a user role he/she has")
+        embed.add_field(name="My Role", value="Server user rock check (Self check)")
+        embed.add_field(name="Talk", value="User message response")
+        embed.add_field(name="Roll", value="Roll the dice game")
+        await interaction.response.send_message(embed=embed)
+        print(f"{interaction.user.name} used the slash command")
+
+    # Slash command to test the bot
+    @hat.tree.command(name="test", description="Test the bot")
+    async def test(interaction: discord.interactions):
+        await interaction.response.send_message("\x1B[38;2;233;30;99m")
+        print(f"{interaction.user.name} used the slash command")
+
+    # Slash command to show the user join date
     @hat.tree.context_menu(name="Show Join Date")
     async def user_info(interaction: discord.interactions, user: discord.Member):
         await interaction.response.send_message(f"Member Joined: {discord.utils.format_dt(user.joined_at)}", ephemeral=True)
+        print(f"{interaction.user.name} used the slash command")
+
+    # Slash command to show a user role he/she has
+    @hat.tree.context_menu(name="Show Role List")
+    async def role_list(interaction: discord.interactions, user: discord.Member):
+        roles = [role.name for role in user.roles if not role.is_default()]
+        if not roles:
+            await interaction.response.send_message(f"{user.mention} doesn't have any roles.", ephemeral=True)
+        else:
+            await interaction.response.send_message(f"{user.mention} has the following roles: {', '.join(roles)}", ephemeral=True)
         print(f"{interaction.user.name} used the slash command")
 
     # Server user rock check (Self check)

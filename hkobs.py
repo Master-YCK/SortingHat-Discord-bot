@@ -8,8 +8,6 @@ from components import embedComp
 from discord import app_commands
 
 hkobsLogo = "https://www.weather.gov.hk/en/abouthko/logoexplain/images/HKOLogo-color-symbol.png"
-iconIndex = None
-weatjerIcon = f"https://www.hko.gov.hk/images/HKOWxIconOutline/pic{iconIndex}.png"
 
 def replace_null(data):
     # Replace the null value with a string
@@ -38,14 +36,8 @@ def place_name():
     cnData = replace_null(get_weather('rhrread', 'tc'))
     placeList = []
     for i in range(len(enData['temperature']['data'])):
-        placeList.append(discord.app_commands.Choice(name=f"{cnData['temperature']['data'][i]['place']}({enData['temperature']['data'][i]['place']})", value=i))
+        placeList.append(discord.app_commands.Choice(name=f"{enData['temperature']['data'][i]['place']}({cnData['temperature']['data'][i]['place']})", value=i))
     return placeList[0:25]
-
-def icon_index(data):
-    iconIndex = []
-    for i in range(len(data['icon'])):
-        iconIndex.append(i)
-    return iconIndex
 
 class HKOBS(app_commands.Group):
     # The commands checking the weather information
@@ -91,7 +83,6 @@ class HKOBS(app_commands.Group):
         # Get the today data
         data = replace_null(get_weather('rhrread', f"{lang.value}"))
         if data:
-            place_name()
             embed = embedComp.cuz_embed(f"***Today's weather in {data['temperature']['data'][place.value]['place']}***", "", 0x004a87, datetime.now())
             embed.add_field(name="Place", value=data['temperature']['data'][place.value]['place'])
             embed.add_field(name="Temperature", value=f"{data['temperature']['data'][place.value]['value']}°")
