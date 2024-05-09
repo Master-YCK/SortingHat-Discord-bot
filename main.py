@@ -1,6 +1,7 @@
 # Project file import
 import setting
 import response
+from components import embedComp
 
 # Discord.py import
 import discord
@@ -12,6 +13,7 @@ import datetime
 from datetime import datetime
 import random
 import os
+import typing
 
 # The button view class
 class SimpleView(discord.ui.View):
@@ -42,6 +44,7 @@ def run():
 
     hat = commands.Bot(command_prefix="./", intents=intents)
 
+    # Sync the bot command
     async def sync_commands():
         try:
             await hat.load_extension("hkobs")
@@ -49,6 +52,28 @@ def run():
             print(f"Synced {synced} commands")
         except Exception as e:
             print(f"An error occurred: {e}")
+
+    # MBTI list for the user to choose
+    async def mbti_autocompletion(
+            interaction: discord.interactions,
+            current: str
+    ) -> typing.List[app_commands.Choice[str]]:
+        choiseList = []
+        for item in ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP']:
+            if current.upper() in item.upper():
+                choiseList.append(app_commands.Choice(name=item, value=item))
+        return choiseList
+
+    # MBTI color for the user role
+    def mbti_color(mbtiType):
+        if mbtiType == 'INTJ' or mbtiType == 'INTP' or mbtiType == 'ENTJ' or mbtiType == 'ENTP':
+            return 0x88619a
+        elif mbtiType == 'INFJ' or mbtiType == 'INFP' or mbtiType == 'ENFJ' or mbtiType == 'ENFP':
+            return 0x33a474
+        elif mbtiType == 'ISTJ' or mbtiType == 'ISFJ' or mbtiType == 'ESTJ' or mbtiType == 'ESFJ':
+            return 0x4298b4
+        elif mbtiType == 'ISTP' or mbtiType == 'ISFP' or mbtiType == 'ESTP' or mbtiType == 'ESFP':
+            return 0xe4ae3a
 
     # Bot running message
     @hat.event
@@ -60,6 +85,8 @@ def run():
         print("--------------------")
 
         await sync_commands()
+        
+        hat.loop.create_task(hat.change_presence(activity=discord.Game(name="Ah, yes. Uh, yeah. There you go! Magic!!!")))
 
     # Welcome message and auto assign a user role
     @hat.event
@@ -108,12 +135,14 @@ def run():
                     f"{ctx.author.mention}. We don't have this, check the memu try again !!!."
                 )
             print(f"({ctx.author}) entered the wrong command")
+            
         elif isinstance(error, commands.MissingRequiredArgument):
             async with ctx.typing():
                 await ctx.reply(
                     f"{ctx.author.mention}. Child you missing something, think about that !!!."
                 )
             print(f"({ctx.author}) entered the wrong argument")
+
         elif isinstance(error, commands.MissingPermissions):
             async with ctx.typing():
                 await ctx.reply(
@@ -121,19 +150,75 @@ def run():
                 )
             print(f"({ctx.author}) entered the wrong permission")
 
+    # Bot command list
     # Bot Slash command list
     @hat.tree.command(name="hello", description="Say Hello to someone!")
     async def hello(interaction: discord.interactions, user: discord.Member):
         await interaction.response.send_message(f"Hi {user.mention} !!!")
         print(f"{interaction.user.name} used the slash command")
 
+    # Slash command to assign a user role of user MBTI
+    @hat.tree.command(name="mbti", description="Add your MBTI")
+    @app_commands.autocomplete(mbti=mbti_autocompletion)
+    async def mbti(interaction: discord.interactions, mbti: str):
+        role = discord.utils.get(interaction.guild.roles, name=mbti)
+        if role:
+            await interaction.user.add_roles(role)
+            await interaction.response.send_message(f"Role {role.name} added to {interaction.user.mention}")
+            print(f"{interaction.user.name} add the {role.name} role")
+        elif not role:
+            role = await interaction.guild.create_role(name=mbti, color=mbti_color(mbti))
+            await interaction.user.add_roles(role)
+            await interaction.response.send_message(f"Role {role.name} added to {interaction.user.mention}")
+            print(f"{interaction.user.name} create a {role.name} role of the server")
+        else:
+            await interaction.response.send_message(f"Can't assign the MBTI role for you", ephemeral=True)
+            print(f"{interaction.user.name} used the slash command")
+
+    # Slash command to check the bot latency
+    @hat.tree.command(name="ping", description="Check the bot latency")
+    async def ping(interaction: discord.interactions):
+        await interaction.response.send_message(f"Pong! {round(hat.latency * 1000)}ms")
+        print(f"{interaction.user.name} used the slash command")
+
+    # Slash command to show the bot command list
+    @hat.tree.command(name="help", description="Show the bot command list")
+    async def help(interaction: discord.interactions):
+        embed = embedComp.cuz_embed("Bot Command List", "", None, datetime.now())
+        embed.add_field(name="Hello", value="Say Hello to someone!")
+        embed.add_field(name="MBTI", value="Add your MBTI")
+        embed.add_field(name="Ping", value="Check the bot latency")
+        embed.add_field(name="Help", value="Show the bot command list")
+        embed.add_field(name="Show Join Date", value="Show the user join date")
+        embed.add_field(name="Show Role List", value="Show a user role he/she has")
+        embed.add_field(name="My Role", value="Server user rock check (Self check)")
+        embed.add_field(name="Talk", value="User message response")
+        embed.add_field(name="Roll", value="Roll the dice game")
+        await interaction.response.send_message(embed=embed)
+        print(f"{interaction.user.name} used the slash command")
+
+    # Slash command to test the bot
+    @hat.tree.command(name="test", description="Test the bot")
+    async def test(interaction: discord.interactions):
+        await interaction.response.send_message("\x1B[38;2;233;30;99m")
+        print(f"{interaction.user.name} used the slash command")
+
+    # Slash command to show the user join date
     @hat.tree.context_menu(name="Show Join Date")
     async def user_info(interaction: discord.interactions, user: discord.Member):
         await interaction.response.send_message(f"Member Joined: {discord.utils.format_dt(user.joined_at)}", ephemeral=True)
         print(f"{interaction.user.name} used the slash command")
 
+    # Slash command to show a user role he/she has
+    @hat.tree.context_menu(name="Show Role List")
+    async def role_list(interaction: discord.interactions, user: discord.Member):
+        roles = [role.name for role in user.roles if not role.is_default()]
+        if not roles:
+            await interaction.response.send_message(f"{user.mention} doesn't have any roles.", ephemeral=True)
+        else:
+            await interaction.response.send_message(f"{user.mention} has the following roles: {', '.join(roles)}", ephemeral=True)
+        print(f"{interaction.user.name} used the slash command")
 
-    # Bot command list
     # Server user rock check (Self check)
     @hat.command()
     async def myrole(ctx: commands.Context):
