@@ -2,6 +2,7 @@
 import setting
 import response
 from components import embedComp
+from llm import ollama3
 
 # Discord.py import
 import discord
@@ -195,6 +196,13 @@ def run():
         embed.add_field(name="Talk", value="User message response")
         embed.add_field(name="Roll", value="Roll the dice game")
         await interaction.response.send_message(embed=embed)
+        print(f"{interaction.user.name} used the slash command")
+
+    # Slash command to uss the chatBot function
+    @hat.tree.command(name="chat", description="Chat with the bot")
+    async def chat(interaction: discord.interactions, user_input: str):
+        timesDiff, resContent = ollama3.llamaChat(user_input)
+        await interaction.response.send_message(f"Time spend: {timesDiff} \nResponse: {resContent}")
         print(f"{interaction.user.name} used the slash command")
 
     # Slash command to test the bot

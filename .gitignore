@@ -4,7 +4,6 @@
 .venv/
 __pycache__/
 Old-Code/
-llm/
 
 #Files
 .env
