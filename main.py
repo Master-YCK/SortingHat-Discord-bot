@@ -50,7 +50,9 @@ def run():
         try:
             await hat.load_extension("hkobs")
             synced = await hat.tree.sync()
-            print(f"Synced {synced} commands")
+            print("Synced the following commands:")
+            for command in synced:
+                print(f"- {command.name} (Type: {command.type.name}, ID: {command.id})")
         except Exception as e:
             print(f"An error occurred: {e}")
 
@@ -86,7 +88,7 @@ def run():
         print("--------------------")
 
         await sync_commands()
-        
+
         hat.loop.create_task(hat.change_presence(activity=discord.Game(name="Ah, yes. Uh, yeah. There you go! Magic!!!")))
 
     # Welcome message and auto assign a user role
@@ -173,7 +175,7 @@ def run():
             await interaction.response.send_message(f"Role {role.name} added to {interaction.user.mention}")
             print(f"{interaction.user.name} create a {role.name} role of the server")
         else:
-            await interaction.response.send_message(f"Can't assign the MBTI role for you", ephemeral=True)
+            await interaction.response.send_message("Can't assign the MBTI role for you", ephemeral=True)
             print(f"{interaction.user.name} used the slash command")
 
     # Slash command to check the bot latency
@@ -227,6 +229,7 @@ def run():
             await interaction.response.send_message(f"{user.mention} has the following roles: {', '.join(roles)}", ephemeral=True)
         print(f"{interaction.user.name} used the slash command")
 
+    # General bot command
     # Server user rock check (Self check)
     @hat.command()
     async def myrole(ctx: commands.Context):

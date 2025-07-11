@@ -3,11 +3,13 @@ import discord
 import requests
 import json
 import datetime
+import asyncio
 from datetime import datetime
 from components import embedComp
 from discord import app_commands
 
-hkobsLogo = "https://www.weather.gov.hk/en/abouthko/logoexplain/images/HKOLogo-color-symbol.png"
+hkobs_logo = "https://www.weather.gov.hk/en/abouthko/logoexplain/images/HKOLogo-color-symbol.png"
+text_lang = 'tc'
 
 def replace_null(data):
     # Replace the null value with a string
@@ -25,7 +27,7 @@ def get_weather(dataType, lang):
         data = response.json()
 
         # Access specific data from the JSON response
-        print(f"API JSON DATA: {json.dumps(data, indent=4)}")  # Replace 'key' with the actual key you want to access
+        # print(f"API JSON DATA: {json.dumps(data, indent=4)}") 
 
         return data
     except requests.exceptions.RequestException as e:
@@ -39,7 +41,31 @@ def place_name():
         placeList.append(discord.app_commands.Choice(name=f"{enData['temperature']['data'][i]['place']}({cnData['temperature']['data'][i]['place']})", value=i))
     return placeList[0:25]
 
+async def check_warnsum_periodically():
+    while True:
+        data = get_weather('warnsum', text_lang)
+        if data:
+            print(f"[{datetime.now()}] HKOBS warnsum: {json.dumps(data, indent=2)}")
+        else:
+            print(f"[{datetime.now()}] Failed to get warnsum data.")
+        await asyncio.sleep(60)
+
+asyncio.create_task(check_warnsum_periodically())
+
 class HKOBS(app_commands.Group):
+    # Set the text language for the command
+    @app_commands.command(name="setlang", description="Set the text language for the command (English, Traditional Chinese, Simplified Chinese)")
+    @app_commands.choices(lang=[
+        discord.app_commands.Choice(name='English', value='en'),
+        discord.app_commands.Choice(name='繁體中文', value='tc'),
+        discord.app_commands.Choice(name='简体中文', value='sc')
+    ])
+
+    async def setlang(self, interaction: discord.Interaction, lang: discord.app_commands.Choice[str]):
+        text_lang = lang.value
+        await interaction.response.send_message(f"The default language set to {lang.name}")
+        print(f"HKOBS default language set to {text_lang}/{lang.name}")
+
     # The commands checking the weather information
     @app_commands.command(name="flw", description="本港地區天氣預報(Weather Forecast)")
     @app_commands.describe(lang="Choose the language")
@@ -63,7 +89,7 @@ class HKOBS(app_commands.Group):
             embed.add_field(name="Forecast", value=data['forecastDesc'])
             embed.add_field(name="Forecast period", value=data['forecastPeriod'])
             embed.add_field(name="Update time", value=datetime.fromisoformat(data['updateTime'].removesuffix('Z')).strftime('%Y-%m-%d %H:%M:%S'))
-            embed.set_footer(text="Data provided by the Hong Kong Observatory", icon_url=hkobsLogo)
+            embed.set_footer(text="Data provided by the Hong Kong Observatory", icon_url=hkobs_logo)
             await interaction.response.send_message(embed=embed)
         else:
             await interaction.response.send_message('Failed to get the weather data.')
@@ -93,15 +119,15 @@ class HKOBS(app_commands.Group):
                 embed.add_field(name="UV Index Desc", value=data['uvindex']['data'][0]['desc'])
 
             embed.add_field(name="Update time", value=datetime.fromisoformat(data['temperature']['recordTime'].removesuffix('Z')).strftime('%Y-%m-%d %H:%M:%S'))
-            embed.set_footer(text="Data provided by the Hong Kong Observatory", icon_url=hkobsLogo)
+            embed.set_footer(text="Data provided by the Hong Kong Observatory", icon_url=hkobs_logo)
             await interaction.response.send_message(embed=embed)
         else:
             await interaction.response.send_message('Failed to get the weather data.')
 
-    @app_commands.command(name="test")
-    async def test(self, interaction: discord.Interaction):
-        embed = embedComp.cuz_embed("***My Embed***", "Test", None, None)
-        await interaction.response.send_message(embed=embed)
+    # @app_commands.command(name="test")
+    # async def test(self, interaction: discord.Interaction):
+    #     embed = embedComp.cuz_embed("***My Embed***", "Test", None, None)
+    #     await interaction.response.send_message(embed=embed)
 
 async def setup(hat):
     hat.tree.add_command(HKOBS(name="hkobs", description="Weather Info From HKOBS API"))
