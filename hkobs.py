@@ -65,7 +65,6 @@ def place_name():
 
 last_warnsum_data = None  # Store the last fetched data
 
-
 async def check_warnsum_periodically():
     global last_warnsum_data
     new_data = get_weather("warnsum", def_text_lang)
@@ -77,7 +76,6 @@ async def check_warnsum_periodically():
         else:
             print("No new weather warning summary data.")
     return None
-
 
 class HKOBS(app_commands.Group):
     # Set the text language for the command

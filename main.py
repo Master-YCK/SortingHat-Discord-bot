@@ -6,7 +6,7 @@ import random
 import os
 import typing
 from components import embedComp
-from llm import ollama3
+from llm import ollama
 from discord.ext import commands
 from discord import app_commands
 from datetime import datetime
@@ -263,7 +263,7 @@ def run():
     # Slash command to uss the chatBot function
     @hat.tree.command(name="chat", description="Chat with the bot")
     async def chat(interaction: discord.interactions, user_input: str):
-        timesDiff, resContent = ollama3.llamaChat(user_input)
+        timesDiff, resContent = ollama.llamaChat(user_input)
         await interaction.response.send_message(
             f"Time spend: {timesDiff} \nResponse: {resContent}"
         )
