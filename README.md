@@ -4,13 +4,12 @@
 
 # SoritngHat Discord Bot
 
-In the hallowed halls of the world of digital magic, the SortingHat Discord bot spreads its wings and proves the transformative power of the Internet. Born from the art of Python and the magic of discord.py, this bot casts spells and incantations to light the way for virtual conversations within the shimmering confines of the Discord server.
+In the enchanted realm of Discord, the SortingHat bot awaits to sort, chat, and conjure magic for every server member. Wielding discord.py 2.5.2 and python 3.12.2, SortingHat is as nimble as a seeker on a broomstick, ready to deliver seamless interactions. For those seeking magical counsel, SortingHat connects to a self-hosted Ollama server, letting you summon AI models like Llama 3 (8B) and more, switching between them as easily as changing wands. Whether you’re rolling dice, assigning MBTI roles, or chatting with AI, SortingHat brings a touch of Hogwarts to your Discord common room.
 
 ## Table of Contents
 
 - [SoritngHat Discord Bot](#soritnghat-discord-bot)
 	- [Table of Contents](#table-of-contents)
-	- [Environment](#environment)
 	- [Project Setup Guidelines](#project-setup-guidelines)
 	- [Feature](#feature)
 		- [Major Features](#major-features)
@@ -18,10 +17,6 @@ In the hallowed halls of the world of digital magic, the SortingHat Discord bot 
 			- [2. AI Chat Powered by Ollama](#2-ai-chat-powered-by-ollama)
 			- [3. Basic Utility Features](#3-basic-utility-features)
 	- [Conclusion](#conclusion)
-
-## Environment
-
-The SortingHat Discord Bot is developed with discord.py 2.5.2 and Python 3.12.2. For chat AI features, it connects to a self-hosted Ollama server, allowing users to easily select and switch between supported models such as Llama 3 (8B) and others available on Ollama. This flexible setup enables personalized AI chat experiences directly within Discord.
 
 ## Project Setup Guidelines
 
