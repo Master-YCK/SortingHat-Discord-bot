@@ -13,6 +13,7 @@ from datetime import datetime
 from discord.ext import tasks
 from hkobs import check_warnsum_periodically
 
+
 # The button view class
 class SimpleView(discord.ui.View):
     foo: bool = None
@@ -30,6 +31,7 @@ class SimpleView(discord.ui.View):
         await interaction.response.send_message("The Retry Generate: ")
         self.foo = True
         self.stop()
+
 
 # Main function & bot running
 def run():
@@ -53,31 +55,71 @@ def run():
 
     # MBTI list for the user to choose
     async def mbti_autocompletion(
-            interaction: discord.interactions,
-            current: str
+        interaction: discord.interactions, current: str
     ) -> typing.List[app_commands.Choice[str]]:
         choiseList = []
-        for item in ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP']:
+        for item in [
+            "INTJ",
+            "INTP",
+            "ENTJ",
+            "ENTP",
+            "INFJ",
+            "INFP",
+            "ENFJ",
+            "ENFP",
+            "ISTJ",
+            "ISFJ",
+            "ESTJ",
+            "ESFJ",
+            "ISTP",
+            "ISFP",
+            "ESTP",
+            "ESFP",
+        ]:
             if current.upper() in item.upper():
                 choiseList.append(app_commands.Choice(name=item, value=item))
         return choiseList
 
     # MBTI color for the user role
     def mbti_color(mbtiType):
-        if mbtiType == 'INTJ' or mbtiType == 'INTP' or mbtiType == 'ENTJ' or mbtiType == 'ENTP':
-            return 0x88619a
-        elif mbtiType == 'INFJ' or mbtiType == 'INFP' or mbtiType == 'ENFJ' or mbtiType == 'ENFP':
-            return 0x33a474
-        elif mbtiType == 'ISTJ' or mbtiType == 'ISFJ' or mbtiType == 'ESTJ' or mbtiType == 'ESFJ':
-            return 0x4298b4
-        elif mbtiType == 'ISTP' or mbtiType == 'ISFP' or mbtiType == 'ESTP' or mbtiType == 'ESFP':
-            return 0xe4ae3a
+        if (
+            mbtiType == "INTJ"
+            or mbtiType == "INTP"
+            or mbtiType == "ENTJ"
+            or mbtiType == "ENTP"
+        ):
+            return 0x88619A
+        elif (
+            mbtiType == "INFJ"
+            or mbtiType == "INFP"
+            or mbtiType == "ENFJ"
+            or mbtiType == "ENFP"
+        ):
+            return 0x33A474
+        elif (
+            mbtiType == "ISTJ"
+            or mbtiType == "ISFJ"
+            or mbtiType == "ESTJ"
+            or mbtiType == "ESFJ"
+        ):
+            return 0x4298B4
+        elif (
+            mbtiType == "ISTP"
+            or mbtiType == "ISFP"
+            or mbtiType == "ESTP"
+            or mbtiType == "ESFP"
+        ):
+            return 0xE4AE3A
 
     # Bot running message
     @hat.event
     async def on_ready():
         await sync_commands()
-        hat.loop.create_task(hat.change_presence(activity=discord.Game(name="Ah, yes. Uh, yeah. There you go! Magic!!!")))
+        hat.loop.create_task(
+            hat.change_presence(
+                activity=discord.Game(name="Ah, yes. Uh, yeah. There you go! Magic!!!")
+            )
+        )
         weather_warnsum.start()
         print("--------------------")
         print(hat.user)
@@ -132,7 +174,7 @@ def run():
                     f"{ctx.author.mention}. We don't have this, check the memu try again !!!."
                 )
             print(f"({ctx.author}) entered the wrong command")
-            
+
         elif isinstance(error, commands.MissingRequiredArgument):
             async with ctx.typing():
                 await ctx.reply(
@@ -142,22 +184,25 @@ def run():
 
         elif isinstance(error, commands.MissingPermissions):
             async with ctx.typing():
-                await ctx.reply(
-                    f"{ctx.author.mention}. How Dare You To Do This !!!."
-                )
+                await ctx.reply(f"{ctx.author.mention}. How Dare You To Do This !!!.")
             print(f"({ctx.author}) entered the wrong permission")
 
     # Automation task to check the warnsum periodically
-    @tasks.loop(minutes=1) # Example: send a message every minute
+    @tasks.loop(minutes=1)  # Example: send a message every minute
     async def weather_warnsum():
         data = await check_warnsum_periodically()
         channel_id = [1185848222321754144]  # Replace with your channel ID
         for cid in channel_id:
             channel = hat.get_channel(cid)
             if channel and data is not None:
-                embed = embedComp.cuz_embed("***Weather Warning Summary 實時天氣警告***", "", None, None)
-                embed.set_thumbnail(url=data.get('URL'))
-                embed.add_field(name="Warning Type", value=f"{data.get('WTS', {}).get('name', 'N/A')}")
+                embed = embedComp.cuz_embed(
+                    "***Weather Warning Summary 實時天氣警告***", "", None, None
+                )
+                embed.set_thumbnail(url=data.get("URL"))
+                embed.add_field(
+                    name="Warning Type",
+                    value=f"{data.get('WTS', {}).get('name', 'N/A')}",
+                )
                 await channel.send(embed=embed)
 
     # Bot command list
@@ -174,15 +219,23 @@ def run():
         role = discord.utils.get(interaction.guild.roles, name=mbti)
         if role:
             await interaction.user.add_roles(role)
-            await interaction.response.send_message(f"Role {role.name} added to {interaction.user.mention}")
+            await interaction.response.send_message(
+                f"Role {role.name} added to {interaction.user.mention}"
+            )
             print(f"{interaction.user.name} add the {role.name} role")
         elif not role:
-            role = await interaction.guild.create_role(name=mbti, color=mbti_color(mbti))
+            role = await interaction.guild.create_role(
+                name=mbti, color=mbti_color(mbti)
+            )
             await interaction.user.add_roles(role)
-            await interaction.response.send_message(f"Role {role.name} added to {interaction.user.mention}")
+            await interaction.response.send_message(
+                f"Role {role.name} added to {interaction.user.mention}"
+            )
             print(f"{interaction.user.name} create a {role.name} role of the server")
         else:
-            await interaction.response.send_message("Can't assign the MBTI role for you", ephemeral=True)
+            await interaction.response.send_message(
+                "Can't assign the MBTI role for you", ephemeral=True
+            )
             print(f"{interaction.user.name} used the slash command")
 
     # Slash command to check the bot latency
@@ -211,19 +264,23 @@ def run():
     @hat.tree.command(name="chat", description="Chat with the bot")
     async def chat(interaction: discord.interactions, user_input: str):
         timesDiff, resContent = ollama3.llamaChat(user_input)
-        await interaction.response.send_message(f"Time spend: {timesDiff} \nResponse: {resContent}")
+        await interaction.response.send_message(
+            f"Time spend: {timesDiff} \nResponse: {resContent}"
+        )
         print(f"{interaction.user.name} used the slash command")
 
     # Slash command to test the bot
     @hat.tree.command(name="test", description="Test the bot")
     async def test(interaction: discord.interactions):
-        await interaction.response.send_message("\x1B[38;2;233;30;99m")
+        await interaction.response.send_message("\x1b[38;2;233;30;99m")
         print(f"{interaction.user.name} used the slash command")
 
     # Slash command to show the user join date
     @hat.tree.context_menu(name="Show Join Date")
     async def user_info(interaction: discord.interactions, user: discord.Member):
-        await interaction.response.send_message(f"Member Joined: {discord.utils.format_dt(user.joined_at)}", ephemeral=True)
+        await interaction.response.send_message(
+            f"Member Joined: {discord.utils.format_dt(user.joined_at)}", ephemeral=True
+        )
         print(f"{interaction.user.name} used the slash command")
 
     # Slash command to show a user role he/she has
@@ -231,9 +288,14 @@ def run():
     async def role_list(interaction: discord.interactions, user: discord.Member):
         roles = [role.name for role in user.roles if not role.is_default()]
         if not roles:
-            await interaction.response.send_message(f"{user.mention} doesn't have any roles.", ephemeral=True)
+            await interaction.response.send_message(
+                f"{user.mention} doesn't have any roles.", ephemeral=True
+            )
         else:
-            await interaction.response.send_message(f"{user.mention} has the following roles: {', '.join(roles)}", ephemeral=True)
+            await interaction.response.send_message(
+                f"{user.mention} has the following roles: {', '.join(roles)}",
+                ephemeral=True,
+            )
         print(f"{interaction.user.name} used the slash command")
 
     # General bot command
@@ -288,6 +350,7 @@ def run():
 
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)
+
 
 if __name__ == "__main__":
     run()

@@ -1,10 +1,10 @@
 # Import the defulat function
 import os
 
-# Import the dotenv 
+# Import the dotenv
 from dotenv import load_dotenv
 
-#load you .env config for the API token
+# load you .env config for the API token
 load_dotenv()
 
 # Get the API token from the .env file.
