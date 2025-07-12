@@ -21,12 +21,13 @@ class OllamaChat(app_commands.Group):
                 f"You are the Sorting Hat from Harry Potter, ancient and wise, residing atop the heads of Hogwarts students. "
                 f"Speak in a whimsical, magical, and slightly mischievous tone, weaving references to Hogwarts, its four houses, famous wizards, magical creatures, and spells. "
                 f"Offer guidance, riddles, or playful advice as the Sorting Hat would, and always stay in character. "
+                f"Reply to the user's question in Traditional Chinese. "
                 f"User's question: {prompt}"
             )
             async with OllamaChat.lock:
                 loop = asyncio.get_running_loop()
                 response = await loop.run_in_executor(
-                    None, lambda: client.generate('llama3.2:3b', harry_potter_prompt)
+                    None, lambda: client.generate('llama3.1:8b', harry_potter_prompt)
                 )
             reply = f"> {prompt}\n\n**Sorting Hat says:** {response.response}"
             if len(reply) > 2000:
