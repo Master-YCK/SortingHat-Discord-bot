@@ -1,24 +1,20 @@
-# Project file import
 import setting
 import response
-from components import embedComp
-from llm import ollama3
-
-# Discord.py import
 import discord
-from discord.ext import commands
-from discord import app_commands
-
-# Python import
 import datetime
-from datetime import datetime
 import random
 import os
 import typing
+from components import embedComp
+from llm import ollama3
+from discord.ext import commands
+from discord import app_commands
+from datetime import datetime
+from discord.ext import tasks
+from hkobs import check_warnsum_periodically
 
 # The button view class
 class SimpleView(discord.ui.View):
-
     foo: bool = None
 
     async def disable_buttons(self):
@@ -37,7 +33,6 @@ class SimpleView(discord.ui.View):
 
 # Main function & bot running
 def run():
-
     # Discord intent setup for bot running
     intents = discord.Intents.default()
     intents.message_content = True
@@ -81,15 +76,14 @@ def run():
     # Bot running message
     @hat.event
     async def on_ready():
+        await sync_commands()
+        hat.loop.create_task(hat.change_presence(activity=discord.Game(name="Ah, yes. Uh, yeah. There you go! Magic!!!")))
+        weather_warnsum.start()
         print("--------------------")
         print(hat.user)
         print(hat.user.id)
         print("** Magic Start **")
         print("--------------------")
-
-        await sync_commands()
-
-        hat.loop.create_task(hat.change_presence(activity=discord.Game(name="Ah, yes. Uh, yeah. There you go! Magic!!!")))
 
     # Welcome message and auto assign a user role
     @hat.event
@@ -152,6 +146,19 @@ def run():
                     f"{ctx.author.mention}. How Dare You To Do This !!!."
                 )
             print(f"({ctx.author}) entered the wrong permission")
+
+    # Automation task to check the warnsum periodically
+    @tasks.loop(minutes=1) # Example: send a message every minute
+    async def weather_warnsum():
+        data = await check_warnsum_periodically()
+        channel_id = [1185848222321754144]  # Replace with your channel ID
+        for cid in channel_id:
+            channel = hat.get_channel(cid)
+            if channel and data is not None:
+                embed = embedComp.cuz_embed("***Weather Warning Summary 實時天氣警告***", "", None, None)
+                embed.set_thumbnail(url=data.get('URL'))
+                embed.add_field(name="Warning Type", value=f"{data.get('WTS', {}).get('name', 'N/A')}")
+                await channel.send(embed=embed)
 
     # Bot command list
     # Bot Slash command list
