@@ -47,6 +47,7 @@ def run():
             await hat.load_extension("ollama_chat")
             await hat.load_extension("hkobs")
             synced = await hat.tree.sync()
+            print("--------------------")
             print("Synced the following commands:")
             for command in synced:
                 print(f"- {command.name} (Type: {command.type.name}, ID: {command.id})")
@@ -57,8 +58,7 @@ def run():
     async def mbti_autocompletion(
         interaction: discord.interactions, current: str
     ) -> typing.List[app_commands.Choice[str]]:
-        choiseList = []
-        for item in [
+        mbti_types = [
             "INTJ",
             "INTP",
             "ENTJ",
@@ -75,41 +75,37 @@ def run():
             "ISFP",
             "ESTP",
             "ESFP",
-        ]:
-            if current.upper() in item.upper():
-                choiseList.append(app_commands.Choice(name=item, value=item))
-        return choiseList
+        ]
+        # Filter MBTI types based on the current input (case-insensitive)
+        return [
+            app_commands.Choice(name=item, value=item)
+            for item in mbti_types
+            if current.upper() in item.upper()
+        ]
 
     # MBTI color for the user role
-    def mbti_color(mbtiType):
-        if (
-            mbtiType == "INTJ"
-            or mbtiType == "INTP"
-            or mbtiType == "ENTJ"
-            or mbtiType == "ENTP"
-        ):
-            return 0x88619A
-        elif (
-            mbtiType == "INFJ"
-            or mbtiType == "INFP"
-            or mbtiType == "ENFJ"
-            or mbtiType == "ENFP"
-        ):
-            return 0x33A474
-        elif (
-            mbtiType == "ISTJ"
-            or mbtiType == "ISFJ"
-            or mbtiType == "ESTJ"
-            or mbtiType == "ESFJ"
-        ):
-            return 0x4298B4
-        elif (
-            mbtiType == "ISTP"
-            or mbtiType == "ISFP"
-            or mbtiType == "ESTP"
-            or mbtiType == "ESFP"
-        ):
-            return 0xE4AE3A
+    def mbti_color(mbti_type: str) -> int:
+        mbti_colors = {
+            "INTJ": 0x88619A,
+            "INTP": 0x88619A,
+            "ENTJ": 0x88619A,
+            "ENTP": 0x88619A,
+            "INFJ": 0x33A474,
+            "INFP": 0x33A474,
+            "ENFJ": 0x33A474,
+            "ENFP": 0x33A474,
+            "ISTJ": 0x4298B4,
+            "ISFJ": 0x4298B4,
+            "ESTJ": 0x4298B4,
+            "ESFJ": 0x4298B4,
+            "ISTP": 0xE4AE3A,
+            "ISFP": 0xE4AE3A,
+            "ESTP": 0xE4AE3A,
+            "ESFP": 0xE4AE3A,
+        }
+        return mbti_colors.get(
+            mbti_type.upper(), 0xCCCCCC
+        )  # Default color if not found
 
     # Bot running message
     @hat.event
@@ -123,7 +119,7 @@ def run():
         weather_warnsum.start()
         print("--------------------")
         print(hat.user)
-        print(hat.user.id)
+        print(f"ID: {hat.user.id}")
         print("** Magic Start **")
         print("--------------------")
 
@@ -260,31 +256,35 @@ def run():
         await interaction.response.send_message(embed=embed)
         print(f"{interaction.user.name} used the slash command")
 
-    # Slash command to uss the chatBot function
-    # @hat.tree.command(name="chat", description="Chat with the bot")
-    # async def chat(interaction: discord.interactions, user_input: str):
-    #     timesDiff, resContent = ollama.llamaChat(user_input)
-    #     await interaction.response.send_message(
-    #         f"Time spend: {timesDiff} \nResponse: {resContent}"
-    #     )
-    #     print(f"{interaction.user.name} used the slash command")
-
     # Slash command to test the bot
     @hat.tree.command(name="test", description="Test the bot")
     async def test(interaction: discord.interactions):
         await interaction.response.send_message("\x1b[38;2;233;30;99m")
         print(f"{interaction.user.name} used the slash command")
 
-    # Slash command to show the user join date
-    @hat.tree.context_menu(name="Show Join Date")
+    # Slash command to roll the dice game
+    @hat.tree.command(name="roll", description="Roll the dice game")
+    async def roll(interaction: discord.Interaction):
+        image_dir = "images/dice/"
+        dice_image = os.listdir(image_dir)
+        image_path = image_dir + random.choice(dice_image)
+        image_file = discord.File(image_path)
+        await interaction.response.send_message(
+            f"Congratulation !!! {interaction.user.mention} you roll the number:",
+            file=image_file,
+        )
+        print(f"({interaction.user.name}) roll the dice with [{image_path}]")
+
+    # Menu command to show the user join date
+    @hat.tree.context_menu(name="Show the User Join Date")
     async def user_info(interaction: discord.interactions, user: discord.Member):
         await interaction.response.send_message(
             f"Member Joined: {discord.utils.format_dt(user.joined_at)}", ephemeral=True
         )
-        print(f"{interaction.user.name} used the slash command")
+        print(f"({interaction.user.name}) used the menu command")
 
-    # Slash command to show a user role he/she has
-    @hat.tree.context_menu(name="Show Role List")
+    # Menu command to show a user role he/she has
+    @hat.tree.context_menu(name="Show the User Role List")
     async def role_list(interaction: discord.interactions, user: discord.Member):
         roles = [role.name for role in user.roles if not role.is_default()]
         if not roles:
@@ -296,7 +296,7 @@ def run():
                 f"{user.mention} has the following roles: {', '.join(roles)}",
                 ephemeral=True,
             )
-        print(f"{interaction.user.name} used the slash command")
+        print(f"({interaction.user.name}) used the slash command")
 
     # General bot command
     # Server user rock check (Self check)
@@ -316,7 +316,7 @@ def run():
 
     # User message response
     @hat.command()
-    async def talk(ctx: commands.Context, *, user_input):
+    async def whisper(ctx: commands.Context, *, user_input):
         bot_response = response.handle_response(user_input)
         # Console log to check user input
         print(f"({ctx.author}) said: [{user_input}] to the bot")
@@ -333,20 +333,6 @@ def run():
             async with ctx.typing():
                 await ctx.reply(f"{ctx.author.mention}, {bot_response}")
             print(f"Bot response to ({ctx.author}) with [{bot_response}]")
-
-    # Roll the dice game
-    @hat.command()
-    async def roll(ctx: commands.Context):
-        image_dir = "images/dice/"
-        dice_image = os.listdir(image_dir)
-        image_path = image_dir + random.choice(dice_image)
-        image_file = discord.File(image_path)
-        async with ctx.typing():
-            await ctx.reply(
-                f"Congratulation !!! {ctx.author.mention} you roll the number:",
-                file=image_file,
-            )
-        print(f"({ctx.author}) roll the dice with [{image_path}]")
 
     # Run the bot with the your discord API
     hat.run(setting.DISCORD_API_SECRET)

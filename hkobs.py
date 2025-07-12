@@ -24,7 +24,8 @@ weather_warning_sign = {
     "TC10": "https://upload.wikimedia.org/wikipedia/commons/3/3d/No._10_Hurricane_Signal.png",
 }
 
-def_text_lang = "tc"
+
+last_warnsum_data = None
 
 
 def replace_null(data):
@@ -63,13 +64,10 @@ def place_name():
     return placeList[0:25]
 
 
-last_warnsum_data = None  # Store the last fetched data
-
-
 async def check_warnsum_periodically():
-    global last_warnsum_data
     new_data = get_weather("warnsum", def_text_lang)
     if new_data:
+        global last_warnsum_data
         if last_warnsum_data != new_data:
             last_warnsum_data = new_data
             print("New weather warning summary data received.")
@@ -77,6 +75,10 @@ async def check_warnsum_periodically():
         else:
             print("No new weather warning summary data.")
     return None
+
+
+def_text_lang = "en"
+
 
 class HKOBS(app_commands.Group):
     # Set the text language for the command
@@ -95,6 +97,7 @@ class HKOBS(app_commands.Group):
     async def setlang(
         self, interaction: discord.Interaction, lang: discord.app_commands.Choice[str]
     ):
+        global def_text_lang
         def_text_lang = lang.value
         await interaction.response.send_message(
             f"The default language set to {lang.name}"
