@@ -6,7 +6,6 @@ import random
 import os
 import typing
 from components import embedComp
-from llm import ollama
 from discord.ext import commands
 from discord import app_commands
 from datetime import datetime
@@ -45,6 +44,7 @@ def run():
     # Sync the bot command
     async def sync_commands():
         try:
+            await hat.load_extension("ollama_chat")
             await hat.load_extension("hkobs")
             synced = await hat.tree.sync()
             print("Synced the following commands:")
@@ -261,13 +261,13 @@ def run():
         print(f"{interaction.user.name} used the slash command")
 
     # Slash command to uss the chatBot function
-    @hat.tree.command(name="chat", description="Chat with the bot")
-    async def chat(interaction: discord.interactions, user_input: str):
-        timesDiff, resContent = ollama.llamaChat(user_input)
-        await interaction.response.send_message(
-            f"Time spend: {timesDiff} \nResponse: {resContent}"
-        )
-        print(f"{interaction.user.name} used the slash command")
+    # @hat.tree.command(name="chat", description="Chat with the bot")
+    # async def chat(interaction: discord.interactions, user_input: str):
+    #     timesDiff, resContent = ollama.llamaChat(user_input)
+    #     await interaction.response.send_message(
+    #         f"Time spend: {timesDiff} \nResponse: {resContent}"
+    #     )
+    #     print(f"{interaction.user.name} used the slash command")
 
     # Slash command to test the bot
     @hat.tree.command(name="test", description="Test the bot")
