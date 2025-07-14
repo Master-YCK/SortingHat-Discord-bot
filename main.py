@@ -11,6 +11,7 @@ from discord import app_commands
 from datetime import datetime
 from discord.ext import tasks
 from hkobs import check_warnsum_periodically
+from trans import translate_text
 
 
 # The button view class
@@ -300,6 +301,43 @@ def run():
                 ephemeral=True,
             )
         print(f"({interaction.user.name}) used the slash command")
+
+    @hat.tree.context_menu(name="Translate")
+    async def translate_message(
+        interaction: discord.Interaction, message: discord.Message
+    ):
+        await interaction.response.defer(ephemeral=True)
+        selected_text = message.content.strip() if message.content else None
+
+        if not selected_text:
+            await interaction.followup.send(
+                "The selected message has no text to translate. Perhaps it's written in invisible ink like in the wizarding world!", ephemeral=True
+            )
+            return
+
+        if len(selected_text) > 2000:
+            await interaction.followup.send(
+                "The selected message is too long to process (over 2000 characters). Even Hermione's enchanted bag can't hold this much text! Please select a shorter message.",
+                ephemeral=True,
+            )
+            return
+
+        try:
+            translated_text = await translate_text(selected_text)
+            max_length = 2000
+            response_text = f"**Original Text:** {selected_text}\n\n**Translated Text:** {translated_text}"
+            if len(response_text) > max_length:
+                response_text = (
+                    f"**Original Text:** {selected_text[:max_length//2]}...\n\n"
+                    f"**Translated Text:** {translated_text[:max_length//2]}...\n\n"
+                    f"**Note:** The text was truncated due to Discord's 2000-character limit. Even the Room of Requirement has its limits!"
+                )
+            await interaction.followup.send(response_text, ephemeral=True)
+        except Exception as e:
+            await interaction.followup.send(
+                f"An error occurred while translating the message: {str(e)}. It seems like a mischievous spell from Fred and George!",
+                ephemeral=True,
+            )
 
     # General bot command
     # Server user rock check (Self check)
