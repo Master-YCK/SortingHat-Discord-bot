@@ -19,7 +19,7 @@ class OllamaChat(app_commands.Group):
     @app_commands.describe(prompt="Your message to the Sorting Hat")
     async def chat(self, interaction: discord.Interaction, prompt: str):
         try:
-            await interaction.response.defer()  # Defer the response to avoid timeout
+            await interaction.response.defer(ephemeral=True)  # Defer the response to avoid timeout
             harry_potter_prompt = (
                 f"You are the Sorting Hat from Harry Potter, ancient and wise, residing atop the heads of Hogwarts students. "
                 f"Speak in a whimsical, magical, and slightly mischievous tone, weaving references to Hogwarts, its four houses, famous wizards, magical creatures, and spells. "
@@ -35,11 +35,11 @@ class OllamaChat(app_commands.Group):
             reply = f"> {prompt}\n\n**Sorting Hat says:** {response.response}"
             if len(reply) > 2000:
                 chunks = [reply[i : i + 2000] for i in range(0, len(reply), 2000)]
-                await interaction.followup.send(chunks[0])
+                await interaction.followup.send(chunks[0], ephemeral=True)
                 for chunk in chunks[1:]:
                     await interaction.channel.send(chunk)
             else:
-                await interaction.followup.send(reply)
+                await interaction.followup.send(reply, ephemeral=True)
         except Exception as e:
             print("Error Info:", e)
             await interaction.followup.send(
