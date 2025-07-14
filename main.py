@@ -117,7 +117,7 @@ def run():
                 activity=discord.Game(name="Ah, yes. Uh, yeah. There you go! Magic!!!")
             )
         )
-        weather_warnsum.start()
+        # weather_warnsum.start()
         print("--------------------")
         print(hat.user)
         print(f"ID: {hat.user.id}")
@@ -181,26 +181,28 @@ def run():
 
         elif isinstance(error, commands.MissingPermissions):
             async with ctx.typing():
-                await ctx.reply(f"{ctx.author.mention}. How Dare You To Do This !!!.")
+                await ctx.reply(
+                    f"{ctx.authorweather_warnsum.start.mention}. How Dare You To Do This !!!."
+                )
             print(f"({ctx.author}) entered the wrong permission")
 
     # Automation task to check the warnsum periodically
-    @tasks.loop(minutes=1)  # Example: send a message every minute
-    async def weather_warnsum():
-        data = await check_warnsum_periodically()
-        channel_id = [1185848222321754144]  # Replace with your channel ID
-        for cid in channel_id:
-            channel = hat.get_channel(cid)
-            if channel and data is not None:
-                embed = embedComp.cuz_embed(
-                    "***Weather Warning Summary 實時天氣警告***", "", None, None
-                )
-                embed.set_thumbnail(url=data.get("URL"))
-                embed.add_field(
-                    name="Warning Type",
-                    value=f"{data.get('WTS', {}).get('name', 'N/A')}",
-                )
-                await channel.send(embed=embed)
+    # @tasks.loop(minutes=1)  # Example: send a message every minute
+    # async def weather_warnsum():
+    #     data = await check_warnsum_periodically()
+    #     channel_id = [1185848222321754144]  # Replace with your channel ID
+    #     for cid in channel_id:
+    #         channel = hat.get_channel(cid)
+    #         if channel and data is not None:
+    #             embed = embedComp.cuz_embed(
+    #                 "***Weather Warning Summary 實時天氣警告***", "", None, None
+    #             )
+    #             embed.set_thumbnail(url=data.get("URL"))
+    #             embed.add_field(
+    #                 name="Warning Type",
+    #                 value=f"{data.get('WTS', {}).get('name', 'N/A')}",
+    #             )
+    #             await channel.send(embed=embed)
 
     # Bot command list
     # Bot Slash command list
