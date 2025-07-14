@@ -44,8 +44,9 @@ def run():
     # Sync the bot command
     async def sync_commands():
         try:
-            await hat.load_extension("ollama_chat")
-            await hat.load_extension("hkobs")
+            extensions = ["ollama_chat", "hkobs", "trans"]
+            for extension in extensions:
+                await hat.load_extension(extension)
             synced = await hat.tree.sync()
             print("--------------------")
             print("Synced the following commands:")
