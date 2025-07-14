@@ -13,7 +13,7 @@ class OllamaChat(app_commands.Group):
     lock = asyncio.Lock()  # Class-level lock to prevent concurrent access
 
     @app_commands.command(
-        name="ask", description="Interact with the Sorting Hat's magical AI wisdom!"
+        name="colloquium", description="Interact with the Sorting Hat's magical AI wisdom!"
     )
     @app_commands.describe(prompt="Your message to the Sorting Hat")
     async def chat(self, interaction: discord.Interaction, prompt: str):
@@ -49,7 +49,7 @@ class OllamaChat(app_commands.Group):
 async def setup(hat):
     hat.tree.add_command(
         OllamaChat(
-            name="chatgpt",
+            name="intellectus",
             description="Converse with the Sorting Hat's magical AI wisdom!",
         )
     )
